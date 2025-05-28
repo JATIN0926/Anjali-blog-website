@@ -1,0 +1,20 @@
+@import "tailwindcss";
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+
+@font-face {
+  font-family: 'SometypeMono Regular';
+  src: url('./Fonts/SometypeMono-Regular.ttf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'ScheherazadeNew Regular';
+  src: url('./Fonts/ScheherazadeNew-Regular.ttf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+}

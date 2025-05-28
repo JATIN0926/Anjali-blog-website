@@ -1,0 +1,74 @@
+/* styles for blog editor content */
+.tiptap {
+    outline: none;
+    padding: 0;
+    /* margin: 0 auto; */
+    max-width: 35rem;
+    font-family: 'Georgia', serif;
+    font-size: 1.2rem;
+    line-height: 1.75;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+  }
+  
+.tiptap p {
+    font-size: 1.5rem;
+    line-height: 2rem;
+  }
+  
+  .tiptap h1 {
+    font-size: 2.9rem;
+    font-weight: bold;
+    color: #201F1F;
+  }
+  
+  .tiptap h2 {
+    font-size: 2rem;
+    font-weight: bold;
+  }
+  
+  .tiptap h3 {
+    font-size: 2.8rem;
+    font-weight: bold;
+  }
+  
+  .tiptap .title {
+    font-size: 3.5rem;
+    font-weight: bold;
+  }
+  
+  .tiptap .small-desc {
+    font-size: 0.8rem;
+    color: #6F6B6B;
+  }
+  .tiptap .regular-para {
+    font-size: 1rem;
+    color: #201F1F;
+  }
+  
+  .tiptap .quote-para {
+    font-size: 2.6rem;
+    font-family: serif;
+    line-height: 1.5rem;
+  }
+  
+  .tiptap blockquote {
+    padding-left: 1rem;
+    border-left: 4px solid #0000;
+    color: #201F1F;
+    font-style: italic;
+  }
+  
+  .tiptap ul {
+    list-style-type: disc;
+    padding-left: 1.5rem;
+  }
+  
+  .tiptap .separator {
+    text-align: center;
+    font-size: 2rem;
+    color: #201F1F;
+    /* background: red; */
+  }
+  
