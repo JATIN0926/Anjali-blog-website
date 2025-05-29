@@ -36,9 +36,10 @@ const CreateBlog = () => {
 
   const applyClassToCurrentParagraph = (className) => {
     const { state, view } = editor;
-    const { tr } = state;
+    const { selection, tr } = state;
+    const { $from } = selection;
 
-    const pos = view.state.selection.$from.before();
+    const pos = $from.before($from.depth);
     const node = state.doc.nodeAt(pos);
 
     if (node?.type.name === "paragraph") {
@@ -48,6 +49,7 @@ const CreateBlog = () => {
       });
       view.dispatch(transaction);
     } else {
+      // Fallback if not inside a paragraph
       editor.commands.insertContent(`<p class="${className}"></p>`);
     }
   };
@@ -123,7 +125,10 @@ const CreateBlog = () => {
         >
           Separator (•••)
         </button>
-        <button onClick={addImage} className="px-4 py-1 bg-gray-200 rounded cursor-pointer">
+        <button
+          onClick={addImage}
+          className="px-4 py-1 bg-gray-200 rounded cursor-pointer"
+        >
           Image Input
         </button>
         <button
