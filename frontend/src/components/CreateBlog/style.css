@@ -56,7 +56,7 @@
   
   .tiptap blockquote {
     padding-left: 1rem;
-    border-left: 4px solid #0000;
+    border-left: 4px solid black;
     color: #201F1F;
     font-style: italic;
   }

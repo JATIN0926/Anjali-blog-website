@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Image from "@tiptap/extension-image";
@@ -8,6 +8,7 @@ import CustomParagraph from "./CustomParagraph.js";
 import "./style.css";
 
 const CreateBlog = () => {
+  const fileInputRef = useRef();
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -27,11 +28,27 @@ const CreateBlog = () => {
     editor.commands.insertContent('<p class="separator">•  •  •</p><br/>');
   };
 
-  const addImage = () => {
-    const url = window.prompt("Enter image URL");
-    if (url) {
-      editor.chain().focus().setImage({ src: url }).run();
+  const handleImageUploadClick = () => {
+    fileInputRef.current.click();
+  };
+
+  const handleImageUpload = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    // Optional: Validate type and size
+    if (!file.type.startsWith("image/")) {
+      alert("Only image files are allowed.");
+      return;
     }
+
+    // Upload to server or use a temporary URL
+    const reader = new FileReader();
+    reader.onload = () => {
+      const imageUrl = reader.result;
+      editor.chain().focus().setImage({ src: imageUrl }).run();
+    };
+    reader.readAsDataURL(file);
   };
 
   const applyClassToCurrentParagraph = (className) => {
@@ -126,11 +143,18 @@ const CreateBlog = () => {
           Separator (•••)
         </button>
         <button
-          onClick={addImage}
+          onClick={handleImageUploadClick}
           className="px-4 py-1 bg-gray-200 rounded cursor-pointer"
         >
           Image Input
         </button>
+        <input
+          type="file"
+          accept="image/*"
+          style={{ display: "none" }}
+          ref={fileInputRef}
+          onChange={handleImageUpload}
+        />
         <button
           onClick={() => editor.chain().focus().toggleBulletList().run()}
           className={`px-4 py-1 rounded cursor-pointer ${
