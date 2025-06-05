@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Image from "@tiptap/extension-image";
@@ -22,6 +22,30 @@ const CreateBlog = () => {
     content: "",
   });
 
+  const [tags, setTags] = useState([]);
+  const [currentTag, setCurrentTag] = useState("");
+  const [showInput, setShowInput] = useState(false);
+
+  const handleAddTag = () => {
+    if (currentTag.trim() !== "" && tags.length < 5) {
+      setTags([...tags, currentTag.trim()]);
+      setCurrentTag("");
+      setShowInput(false);
+    }
+  };
+
+  const handleInputKeyPress = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleAddTag();
+    }
+  };
+
+  const handleDeleteTag = (indexToDelete) => {
+    const newTags = tags.filter((_, idx) => idx !== indexToDelete);
+    setTags(newTags);
+  };
+
   if (!editor) return null;
 
   const addSeparator = () => {
@@ -36,7 +60,6 @@ const CreateBlog = () => {
     const file = event.target.files[0];
     if (!file) return;
 
-    // Optional: Validate type and size
     if (!file.type.startsWith("image/")) {
       alert("Only image files are allowed.");
       return;
@@ -127,6 +150,15 @@ const CreateBlog = () => {
           Bold
         </button>
         <button
+          onClick={() => editor.chain().focus().toggleItalic().run()}
+          className={`px-4 py-1 rounded cursor-pointer ${
+            editor.isActive("italic") ? "bg-black text-white" : "bg-gray-200"
+          }`}
+        >
+          Italic
+        </button>
+
+        <button
           onClick={() => editor.chain().focus().toggleBlockquote().run()}
           className={`px-4 py-1 rounded cursor-pointer ${
             editor.isActive("blockquote")
@@ -135,6 +167,12 @@ const CreateBlog = () => {
           }`}
         >
           Blockquote
+        </button>
+        <button
+          onClick={() => applyClassToCurrentParagraph("Value_Statement")}
+          className="px-4 py-1 bg-gray-200 rounded cursor-pointer"
+        >
+          Value Statement
         </button>
         <button
           onClick={addSeparator}
@@ -168,6 +206,47 @@ const CreateBlog = () => {
       </div>
 
       <EditorContent editor={editor} className="tiptap" />
+      <div className="flex flex-col items-center gap-2 mt-8">
+        {/* Tags Display */}
+        <div className="flex justify-center flex-wrap gap-3">
+          {tags.map((tag, index) => (
+            <span
+              key={index}
+              className="bg-[#E7E6E6] text-[#201F1F] px-4 py-1 text-[1.2rem] tag"
+            >
+              {tag}
+              <button
+                onClick={() => handleDeleteTag(index)}
+                className="ml-2 text-gray-600 hover:text-red-600 font-bold"
+              >
+                &times;
+              </button>
+            </span>
+          ))}
+          {/* Input shown only if showInput is true and tags < 5 */}
+          {showInput && tags.length < 5 && (
+            <input
+              type="text"
+              value={currentTag}
+              onChange={(e) => setCurrentTag(e.target.value)}
+              onKeyDown={handleInputKeyPress}
+              autoFocus
+              className="px-4 py-1 rounded-full text-sm border border-gray-400 bg-white"
+              placeholder="Type tag & press Enter"
+            />
+          )}
+        </div>
+
+        {/* Button to show input */}
+        {!showInput && tags.length < 5 && (
+          <button
+            onClick={() => setShowInput(true)}
+            className="px-4 py-1 bg-gray-300 rounded-full text-sm font-medium hover:bg-gray-400"
+          >
+            + Add Tag
+          </button>
+        )}
+      </div>
     </div>
   );
 };
