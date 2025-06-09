@@ -24,7 +24,7 @@ const Footer = () => {
       {/* Image Section */}
       <div className="w-[20%] h-[20%] self-start">
         <img
-          src="/images/leaf.png"
+          src="/images/footer_img.png"
           alt=""
           className="w-full h-full object-cover rounded-md"
         />
