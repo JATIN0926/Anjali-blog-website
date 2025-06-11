@@ -13,7 +13,7 @@ const blogSchema = new mongoose.Schema(
     tags: {
       type: [String],
       default: [],
-      validate: [arr => arr.length <= 5, 'Maximum 5 tags allowed'],
+      validate: [(arr) => arr.length <= 5, "Maximum 5 tags allowed"],
     },
     type: {
       type: String,
@@ -31,7 +31,7 @@ const blogSchema = new mongoose.Schema(
     },
     timeToRead: {
       type: Number,
-      default: 1, // will update during save
+      default: 1,
     },
     likes: {
       type: Number,
@@ -41,9 +41,13 @@ const blogSchema = new mongoose.Schema(
       type: Date,
       default: Date.now,
     },
+    thumbnail: {
+      type: String,
+      default: "",
+    },
   },
   {
-    timestamps: true, // adds createdAt and updatedAt
+    timestamps: true,
   }
 );
 

@@ -27,11 +27,15 @@ const BlogCard = ({ date, heading, imgSrc }) => {
 
       {/* Right image with fixed height */}
       <div className="w-[40%] h-32 self-start">
-        <img
-          src={imgSrc}
-          alt=""
-          className="w-full h-full object-cover rounded-md"
-        />
+        {imgSrc ? (
+          <img
+            src={imgSrc}
+            alt=""
+            className="w-full h-full object-cover rounded-md"
+          />
+        ) : (
+          <div className="w-full h-full rounded-md" />
+        )}
       </div>
     </div>
   );

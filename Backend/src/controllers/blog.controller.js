@@ -4,7 +4,7 @@ import crypto from "crypto";
 
 export const createBlog = async (req, res) => {
   try {
-    const { title, content, tags, type, uid } = req.body;
+    const { title, content, tags, type, uid, thumbnail } = req.body;
 
     if (!title || !content || !uid) {
       return res.status(400).json({ message: "Missing required fields" });
@@ -23,6 +23,7 @@ export const createBlog = async (req, res) => {
       content,
       tags,
       type,
+      thumbnail,
       user: user._id,
     });
 
@@ -39,9 +40,7 @@ export const createBlog = async (req, res) => {
 // @route   GET /api/blogs
 export const getAllBlogs = async (req, res) => {
   try {
-    const blogs = await Blog.find()
-      .populate("user", "name email photoURL")
-      .sort({ createdAt: -1 });
+    const blogs = await Blog.find().sort({ createdAt: -1 });
     res.status(200).json(blogs);
   } catch (error) {
     console.error("Error fetching blogs:", error);

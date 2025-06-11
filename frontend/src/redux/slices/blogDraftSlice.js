@@ -5,6 +5,7 @@ const initialState = {
   content: "",  
   tags: [],
   selectedOption: "",
+  thumbnail:""
 };
 
 const blogDraftSlice = createSlice({
@@ -23,6 +24,9 @@ const blogDraftSlice = createSlice({
     setSelectedOption: (state, action) => {
       state.selectedOption = action.payload;
     },
+    setThumbnail: (state, action) => {
+      state.thumbnail = action.payload;
+    },
     clearDraft: () => initialState,
   },
 });
@@ -32,6 +36,7 @@ export const {
   setContent,
   setTags,
   setSelectedOption,
+  setThumbnail,
   clearDraft,
 } = blogDraftSlice.actions;
 

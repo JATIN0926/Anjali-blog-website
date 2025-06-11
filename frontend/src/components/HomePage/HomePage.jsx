@@ -1,15 +1,37 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import BlogCard from "./BlogCard/BlogCard";
-import cardsData from "../../data/cardsData.json";
 import Footer from "./Footer/Footer";
 import GoogleOneTapLogin from "../GoogleOneTapLogin/GoogleOneTapLogin";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import Loader from "../Loader/Loader";
+import axios from "axios";
 
 const HomePage = () => {
+  const [blogs, setBlogs] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
   const [activeTab, setActiveTab] = useState("social");
   const user = useSelector((state) => state.user.currentUser);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchBlogs = async () => {
+      try {
+        const res = await axios.get("/api/blogs");
+        setBlogs(res.data);
+      } catch (err) {
+        console.error("Failed to fetch blogs:", err);
+        setError("Failed to fetch blogs.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBlogs();
+  }, []);
+
   return (
     <>
       <GoogleOneTapLogin />
@@ -77,8 +99,9 @@ const HomePage = () => {
                 className="text-[2rem] leading-7 mb-10"
                 style={{ fontFamily: "ScheherazadeNew Regular, monospace" }}
               >
-                Here, you will find articles that will tear Apart the Scripts
-                Society Wrote for Us.
+                {activeTab === "social"
+                  ? "Here, you will find articles that will tear Apart the Scripts Society Wrote for Us."
+                  : "Here, you will find these are moments I kept. Messy, unsure, and mine"}
               </h1>
               <div
                 className="w-full flex items-center justify-center relative"
@@ -119,14 +142,29 @@ const HomePage = () => {
               </div>
             </div>
 
-            {cardsData.map((card, index) => (
-              <BlogCard
-                key={index}
-                date={card.date}
-                heading={card.heading}
-                imgSrc={card.imgSrc}
-              />
-            ))}
+            <div className="h-[40rem] overflow-y-auto pr-2 custom-scrollbar">
+              {loading ? (
+                <Loader />
+              ) : error ? (
+                <p>{error}</p>
+              ) : (
+                blogs.map((blog) => (
+                  <BlogCard
+                    key={blog._id}
+                    date={new Date(blog.datePosted).toLocaleDateString(
+                      "en-US",
+                      {
+                        month: "long",
+                        day: "numeric",
+                        year: "numeric",
+                      }
+                    )}
+                    heading={blog.title}
+                    imgSrc={blog.thumbnail || ""}
+                  />
+                ))
+              )}
+            </div>
           </div>
         </div>
         <Footer />

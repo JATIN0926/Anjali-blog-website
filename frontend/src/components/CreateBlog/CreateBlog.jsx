@@ -13,15 +13,18 @@ import {
   setContent,
   setTags,
   setSelectedOption,
+  setThumbnail,
 } from "../../redux/slices/blogDraftSlice.js";
 import "./style.css";
 
 const CreateBlog = () => {
   const fileInputRef = useRef();
   const dispatch = useDispatch();
-  const { title, content, selectedOption } = useSelector(
+  const { title, content, selectedOption, thumbnail } = useSelector(
     (state) => state.blogDraft
   );
+
+  console.log("b", selectedOption);
   const user = useSelector((state) => state.user.currentUser);
   const storedTags = useSelector((state) => state.blogDraft.tags);
 
@@ -161,6 +164,43 @@ const CreateBlog = () => {
     }
   };
 
+  const handleThumbnailUpload = async (event) => {
+    const file = event.target.files[0];
+    event.target.value = null;
+
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      toast.error("Only image files are allowed.");
+      return;
+    }
+
+    toast.loading("Uploading thumbnail...");
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", "blog_preset");
+
+    try {
+      const response = await axios.post(
+        `https://api.cloudinary.com/v1_1/${
+          import.meta.env.VITE_CLOUDINARY_CLOUD_NAME
+        }/upload`,
+        formData
+      );
+
+      toast.dismiss();
+      toast.success("Thumbnail uploaded!");
+
+      const fileUrl = response.data.secure_url;
+      dispatch(setThumbnail(fileUrl));
+    } catch (error) {
+      toast.dismiss();
+      toast.error("Thumbnail upload failed!");
+      console.error("Cloudinary thumbnail upload error:", error);
+    }
+  };
+
   const applyClassToCurrentParagraph = (className) => {
     const { state, view } = editor;
     const { selection, tr } = state;
@@ -202,6 +242,7 @@ const CreateBlog = () => {
           content,
           tags,
           type: selectedOption,
+          thumbnail,
           uid: user.uid,
         },
         {
@@ -217,7 +258,8 @@ const CreateBlog = () => {
       dispatch(setTitle(""));
       dispatch(setContent(""));
       dispatch(setTags([]));
-      dispatch(setSelectedOption("Not Set"));
+      dispatch(setSelectedOption(""));
+      dispatch(setThumbnail(""));
       setLocalTags([]);
       setCurrentTag("");
       setShowInput(false);
@@ -243,7 +285,7 @@ const CreateBlog = () => {
             className="flex items-center gap-2 text-[#201F1F] font-medium cursor-pointer border border-[#504E4F] px-4 py-2"
             onClick={() => setDropdownOpen((prev) => !prev)}
           >
-            {selectedOption}
+            {selectedOption || "Publish To"}
             <img src="/icons/arrow.svg" alt="Arrow" className="w-4 h-4" />
           </button>
 
@@ -267,7 +309,32 @@ const CreateBlog = () => {
           )}
         </div>
       </div>
-      <h1 className="text-3xl font-bold">Create Blog</h1>
+      <div className="w-full flex items-center justify-between mb-4">
+        <h1 className="text-3xl font-bold">Create Blog</h1>
+        <input
+          type="file"
+          accept="image/*"
+          id="thumbnailInput"
+          style={{ display: "none" }}
+          onChange={handleThumbnailUpload}
+        />
+        <div className="flex flex-col items-center justify-center gap-2">
+          <button
+            onClick={() => document.getElementById("thumbnailInput").click()}
+            className=" cursor-pointer mt-2 px-4 py-1 bg-gray-300 rounded-full text-sm font-medium hover:bg-gray-400 self-center"
+          >
+            {thumbnail ? "Change Thumbnail" : "    Upload Thumbnail"}
+          </button>
+
+          {thumbnail && (
+            <img
+              src={thumbnail}
+              alt="Thumbnail Preview"
+              className="mt-2 w-64 h-40 object-cover rounded self-center"
+            />
+          )}
+        </div>
+      </div>
 
       <div className="flex flex-wrap gap-2 sticky top-0 bg-white z-20 py-2">
         <button
