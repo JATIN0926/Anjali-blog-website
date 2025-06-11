@@ -275,6 +275,7 @@ const CreateBlog = () => {
 
   return (
     <div className="w-full p-6 flex flex-col gap-6">
+      <div className="bg-[#303130] w-full h-[0.1rem]"></div>
       <div
         className="w-full flex items-center justify-between"
         style={{ fontFamily: "SometypeMono Regular, monospace" }}

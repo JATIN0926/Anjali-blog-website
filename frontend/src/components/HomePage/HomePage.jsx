@@ -20,7 +20,7 @@ const HomePage = () => {
     const fetchBlogs = async () => {
       try {
         const res = await axios.get("/api/blogs");
-        setBlogs(res.data);
+        setBlogs(res.data.data);
       } catch (err) {
         console.error("Failed to fetch blogs:", err);
         setError("Failed to fetch blogs.");
@@ -151,6 +151,7 @@ const HomePage = () => {
                 blogs.map((blog) => (
                   <BlogCard
                     key={blog._id}
+                    id={blog._id}
                     date={new Date(blog.datePosted).toLocaleDateString(
                       "en-US",
                       {

@@ -1,6 +1,8 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
-const BlogCard = ({ date, heading, imgSrc }) => {
+const BlogCard = ({ date, heading, imgSrc , id }) => {
+  const navigate = useNavigate();
   return (
     <div className="w-full border-t-[1px] border-t-[#303130] p-4 flex items-center justify-between gap-6">
       {/* Left content */}
@@ -18,6 +20,7 @@ const BlogCard = ({ date, heading, imgSrc }) => {
           {heading}
         </h1>
         <button
+          onClick={() => navigate(`/blog/${id}`)}
           className="text-[#201F1F] p-2 px-3 rounded-md bg-[#DEDEDE] cursor-pointer text-[0.75rem] mt-6"
           style={{ fontFamily: "SometypeMono Regular, monospace" }}
         >
