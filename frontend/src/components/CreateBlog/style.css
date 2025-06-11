@@ -103,4 +103,15 @@
     color: #201F1F;
     margin: 80px auto;
   }
+  .video-wrapper {
+    margin: 1rem 0;
+    text-align: center;
+  }
+  
+  .video-wrapper video {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+  }
+  
   

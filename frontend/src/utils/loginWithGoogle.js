@@ -1,24 +1,25 @@
-// src/utils/loginWithGoogle.js
-import { signInWithPopup } from "firebase/auth";
-import { auth, provider } from "../../firebase";
 import axios from "axios";
 
-export const loginWithGoogle = async () => {
-  try {
-    const result = await signInWithPopup(auth, provider);
-    const { displayName, email, photoURL, uid } = result.user;
+export const loginWithGoogle = () => {
+  return new Promise((resolve, reject) => {
+    /* global google */
+    if (!window.google) return reject("Google API not loaded");
 
-    // Send to backend
-    await axios.post("/api/users", {
-      name: displayName,
-      email,
-      photoURL,
-      uid,
+    google.accounts.id.initialize({
+      client_id: import.meta.env.VITE_FIREBASE_CLIENT_ID,
+      callback: async (response) => {
+        try {
+          const res = await axios.post("/api/users/google-onetap", {
+            credential: response.credential,
+          });
+          resolve(res.data.data.user); // returns the user object
+        } catch (err) {
+          reject(err);
+        }
+      },
+      cancel_on_tap_outside: false,
     });
 
-    return { name: displayName, email, photoURL, uid };
-  } catch (err) {
-    console.error("Login failed", err);
-    throw err;
-  }
+    google.accounts.id.prompt(); // triggers the login popup
+  });
 };

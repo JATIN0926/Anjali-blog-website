@@ -1,13 +1,14 @@
-// src/components/GoogleOneTapLogin.jsx
 import { useEffect } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "../../redux/slices/userSlice";
 
 const GoogleOneTapLogin = () => {
   const dispatch = useDispatch();
+  const user = useSelector((state) => state.user.currentUser);
   useEffect(() => {
+    if (user) return;
     /* global google */
     if (window.google) {
       google.accounts.id.initialize({

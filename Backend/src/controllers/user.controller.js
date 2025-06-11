@@ -42,7 +42,6 @@ export const loginWithOneTap = async (req, res) => {
     const {
       _id,
       uid: userUid,
-      isAdmin,
       createdAt,
       updatedAt,
       __v,
@@ -58,5 +57,23 @@ export const loginWithOneTap = async (req, res) => {
   } catch (error) {
     console.error("Google One Tap login failed", error);
     return res.status(500).json(new ApiError(500, "Login failed"));
+  }
+};
+
+export const logout = async (req, res) => {
+  try {
+    res.clearCookie("token", {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+    });
+    return res.status(200).json(
+      new ApiResponse(200, {
+        message: "Logged out successfully",
+      })
+    );
+  } catch (error) {
+    console.error("Logout failed", error);
+    return res.status(500).json(new ApiError(500, "Logout failed"));
   }
 };

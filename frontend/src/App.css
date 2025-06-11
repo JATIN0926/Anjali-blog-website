@@ -7,7 +7,7 @@ html, body {
 }
 
 @font-face {
-  font-family: 'SometypeMono Regular';
+font-family: 'SometypeMono Regular';
   src: url('./Fonts/SometypeMono-Regular.ttf') format('opentype');
   font-weight: 400;
   font-style: normal;

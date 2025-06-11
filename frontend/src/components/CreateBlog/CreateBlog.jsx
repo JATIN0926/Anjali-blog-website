@@ -1,14 +1,30 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Image from "@tiptap/extension-image";
 import BulletList from "@tiptap/extension-bullet-list";
 import ListItem from "@tiptap/extension-list-item";
 import CustomParagraph from "./CustomParagraph.js";
+import toast from "react-hot-toast";
+import axios from "axios";
 import "./style.css";
 
 const CreateBlog = () => {
   const fileInputRef = useRef();
+
+  const dropdownRef = useRef(null);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [selectedOption, setSelectedOption] = useState("Publish to");
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -58,20 +74,55 @@ const CreateBlog = () => {
 
   const handleImageUpload = async (event) => {
     const file = event.target.files[0];
+    event.target.value = null;
+
     if (!file) return;
 
-    if (!file.type.startsWith("image/")) {
-      alert("Only image files are allowed.");
+    const isImage = file.type.startsWith("image/");
+    if (!isImage) {
+      toast.error("Only image files are allowed.");
       return;
     }
 
-    // Upload to server or use a temporary URL
-    const reader = new FileReader();
-    reader.onload = () => {
-      const imageUrl = reader.result;
-      editor.chain().focus().setImage({ src: imageUrl }).run();
-    };
-    reader.readAsDataURL(file);
+    toast.loading("Uploading...");
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", "blog_preset");
+
+    try {
+      const response = await axios.post(
+        `https://api.cloudinary.com/v1_1/${
+          import.meta.env.VITE_CLOUDINARY_CLOUD_NAME
+        }/upload`,
+        formData
+      );
+
+      toast.dismiss();
+      toast.success("Uploaded successfully!");
+
+      const fileUrl = response.data.secure_url;
+
+      editor
+        .chain()
+        .focus()
+        .insertContent([
+          {
+            type: "image",
+            attrs: {
+              src: fileUrl,
+            },
+          },
+          {
+            type: "paragraph",
+          },
+        ])
+        .run();
+    } catch (error) {
+      toast.dismiss();
+      toast.error("Upload failed!");
+      console.error("Cloudinary upload error:", error);
+    }
   };
 
   const applyClassToCurrentParagraph = (className) => {
@@ -96,6 +147,40 @@ const CreateBlog = () => {
 
   return (
     <div className="w-full p-6 flex flex-col gap-6">
+      <div
+        className="w-full flex items-center justify-between"
+        style={{ fontFamily: "SometypeMono Regular, monospace" }}
+      >
+        <h1 className="text-[#201F1F]">Anjali Chaudhary</h1>
+        <div className="relative inline-block text-left" ref={dropdownRef}>
+          <button
+            className="flex items-center gap-2 text-[#201F1F] font-medium cursor-pointer border border-[#504E4F] px-4 py-2"
+            onClick={() => setDropdownOpen((prev) => !prev)}
+          >
+            {selectedOption}
+            <img src="/icons/arrow.svg" alt="Arrow" className="w-4 h-4" />
+          </button>
+
+          {dropdownOpen && (
+            <div className="absolute right-0 mt-2 w-30 bg-white border border-[#504E4F] rounded shadow-md z-10">
+              <ul className="py-1 text-sm text-[#201F1F]">
+                {["Diary", "Article"].map((option) => (
+                  <li
+                    key={option}
+                    className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                    onClick={() => {
+                      setSelectedOption(option);
+                      setDropdownOpen(false);
+                    }}
+                  >
+                    {option}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+      </div>
       <h1 className="text-3xl font-bold">Create Blog</h1>
 
       <div className="flex flex-wrap gap-2">
