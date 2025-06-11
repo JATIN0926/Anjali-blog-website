@@ -11,9 +11,7 @@ export const createBlog = async (req, res) => {
     const { title, content, tags, type, uid, thumbnail } = req.body;
 
     if (!title || !content || !uid) {
-      return res
-        .status(400)
-        .json(new ApiError(400, "Missing required fields"));
+      return res.status(400).json(new ApiError(400, "Missing required fields"));
     }
 
     const user = await User.findOne({ uid });
@@ -33,9 +31,12 @@ export const createBlog = async (req, res) => {
       user: user._id,
     });
 
-    return res
-      .status(201)
-      .json(new ApiResponse(201, { message: "Blog created successfully", blog: newBlog }));
+    return res.status(201).json(
+      new ApiResponse(201, {
+        message: "Blog created successfully",
+        blog: newBlog,
+      })
+    );
   } catch (error) {
     console.error("Error creating blog:", error);
     return res.status(500).json(new ApiError(500, "Server error"));
@@ -66,5 +67,55 @@ export const getBlogById = async (req, res) => {
   } catch (error) {
     console.error("Error fetching blog:", error);
     return res.status(500).json(new ApiError(500, "Server error"));
+  }
+};
+
+export const deleteBlog = async (req, res) => {
+  try {
+    const blogId = req.params.id;
+    const deletedBlog = await Blog.findByIdAndDelete(blogId);
+
+    if (!deletedBlog) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Blog not found" });
+    }
+
+    res
+      .status(200)
+      .json({ success: true, message: "Blog deleted successfully" });
+  } catch (error) {
+    console.error("Delete Error:", error);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+export const updateBlog = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { title, content, tags, type, thumbnail } = req.body;
+
+    if (!title || !content || !tags || !type) {
+      throw new ApiError(400, "All fields are required.");
+    }
+
+    const blog = await Blog.findById(id);
+    if (!blog) {
+      throw new ApiError(404, "Blog not found.");
+    }
+
+    blog.title = title;
+    blog.content = content;
+    blog.tags = tags;
+    blog.type = type;
+    blog.thumbnail = thumbnail;
+
+    const updatedBlog = await blog.save();
+
+    return res
+      .status(200)
+      .json(new ApiResponse(200, updatedBlog, "Blog updated successfully"));
+  } catch (error) {
+    next(error);
   }
 };

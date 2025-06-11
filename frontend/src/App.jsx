@@ -5,6 +5,7 @@ import CreateBlog from "./components/CreateBlog/CreateBlog";
 import "./App.css";
 import { Toaster } from "react-hot-toast";
 import BlogDetail from "./components/BlogDetail/BlogDetail";
+import EditBlog from "./components/EditBlog/EditBlog";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/create-blog" element={<CreateBlog />} />
             <Route path="/blog/:id" element={<BlogDetail />} />
+            <Route path="/edit/:id" element={<EditBlog />} />
           </Routes>
         </div>
       </Router>

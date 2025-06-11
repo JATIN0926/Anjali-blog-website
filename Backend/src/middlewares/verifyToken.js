@@ -1,8 +1,8 @@
 // src/middleware/verifyToken.js
 
 import jwt from "jsonwebtoken";
-import User from "../models/User.js";
-import ApiError from "../utils/ApiError.js";
+import User from "../models/user.model.js";
+import { ApiError } from "../utils/ApiError.js";
 
 const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret_key";
 

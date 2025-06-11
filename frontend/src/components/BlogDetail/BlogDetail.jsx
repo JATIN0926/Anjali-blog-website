@@ -3,7 +3,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Loader from "../Loader/Loader";
 import { useSelector } from "react-redux";
-import "./style.css";
+import "../CreateBlog/style.css";
+import toast from "react-hot-toast";
 const BlogDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -27,11 +28,14 @@ const BlogDetail = () => {
   }, [id]);
 
   const handleDelete = async () => {
+    const toastId = toast.loading("Deleting blog...");
     try {
-      await axios.delete(`/api/blogs/${id}`);
+      await axios.delete(`/api/blogs/delete/${id}`);
+      toast.success("Blog deleted successfully", { id: toastId });
       navigate("/");
     } catch (err) {
-      console.error("Failed to delete blog:", err);
+      toast.error("Failed to delete blog", { id: toastId });
+      console.error("Delete error:", err);
     }
   };
 
@@ -47,8 +51,6 @@ const BlogDetail = () => {
       </p>
     );
 
-  console.log(blog);
-
   return (
     <div className="px-6 py-4 w-full min-h-screen">
       <div className="bg-[#303130] w-full h-[0.1rem]"></div>
@@ -57,7 +59,10 @@ const BlogDetail = () => {
         style={{ fontFamily: "SometypeMono Regular, monospace" }}
       >
         <h1 className="text-[#201F1F] mt-5">Anjali Chaudhary</h1>
-        <h1 className="text-[#201F1F] mt-5 cursor-pointer hover:underline" onClick={() => navigate("/")}>
+        <h1
+          className="text-[#201F1F] mt-5 cursor-pointer hover:underline"
+          onClick={() => navigate("/")}
+        >
           Go To HomePage
         </h1>
       </div>
@@ -123,11 +128,13 @@ const BlogDetail = () => {
                   src="/icons/edit.svg"
                   alt="Arrow"
                   className="w-6 h-6 cursor-pointer"
+                  onClick={() => navigate(`/edit/${id}`)}
                 />
                 <img
                   src="/icons/delete.svg"
                   alt="Arrow"
                   className="w-6 h-6 cursor-pointer"
+                  onClick={handleDelete}
                 />
               </>
             )}
@@ -181,11 +188,13 @@ const BlogDetail = () => {
                   src="/icons/edit.svg"
                   alt="Arrow"
                   className="w-6 h-6 cursor-pointer"
+                  onClick={() => navigate(`/edit/${id}`)}
                 />
                 <img
                   src="/icons/delete.svg"
                   alt="Arrow"
                   className="w-6 h-6 cursor-pointer"
+                  onClick={handleDelete}
                 />
               </>
             )}
