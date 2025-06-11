@@ -7,24 +7,26 @@ import ListItem from "@tiptap/extension-list-item";
 import CustomParagraph from "./CustomParagraph.js";
 import toast from "react-hot-toast";
 import axios from "axios";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  setTitle,
+  setContent,
+  setTags,
+  setSelectedOption,
+} from "../../redux/slices/blogDraftSlice.js";
 import "./style.css";
 
 const CreateBlog = () => {
   const fileInputRef = useRef();
+  const dispatch = useDispatch();
+  const { title, content, selectedOption } = useSelector(
+    (state) => state.blogDraft
+  );
+  const user = useSelector((state) => state.user.currentUser);
+  const storedTags = useSelector((state) => state.blogDraft.tags);
 
   const dropdownRef = useRef(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [selectedOption, setSelectedOption] = useState("Publish to");
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setDropdownOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -35,16 +37,50 @@ const CreateBlog = () => {
       BulletList,
       ListItem,
     ],
-    content: "",
+    content: content || "",
   });
-
-  const [tags, setTags] = useState([]);
+  const [tags, setLocalTags] = useState(storedTags || []);
   const [currentTag, setCurrentTag] = useState("");
   const [showInput, setShowInput] = useState(false);
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  useEffect(() => {
+    if (!editor) return;
+
+    const updateReduxContent = () => {
+      const html = editor.getHTML();
+      dispatch(setContent(html));
+    };
+
+    editor.on("update", updateReduxContent);
+
+    return () => editor.off("update", updateReduxContent);
+  }, [editor, dispatch]);
+
+  useEffect(() => {
+    dispatch(setTags(tags));
+  }, [tags, dispatch]);
 
   const handleAddTag = () => {
-    if (currentTag.trim() !== "" && tags.length < 5) {
-      setTags([...tags, currentTag.trim()]);
+    if (tags.length >= 5) {
+      toast.error("You can add up to 5 tags only.");
+      return;
+    }
+
+    if (
+      currentTag.trim() !== "" &&
+      tags.length < 5 &&
+      !tags.includes(currentTag.trim())
+    ) {
+      setLocalTags([...tags, currentTag.trim()]);
       setCurrentTag("");
       setShowInput(false);
     }
@@ -59,7 +95,7 @@ const CreateBlog = () => {
 
   const handleDeleteTag = (indexToDelete) => {
     const newTags = tags.filter((_, idx) => idx !== indexToDelete);
-    setTags(newTags);
+    setLocalTags(newTags);
   };
 
   if (!editor) return null;
@@ -145,6 +181,56 @@ const CreateBlog = () => {
     }
   };
 
+  const handlePostBlog = async () => {
+    if (
+      !title.trim() ||
+      !content.trim() ||
+      tags.length === 0 ||
+      !selectedOption
+    ) {
+      toast.error("Please fill all required fields.");
+      return;
+    }
+
+    try {
+      toast.loading("Posting your blog...");
+
+      const response = await axios.post(
+        `/api/blogs/create`,
+        {
+          title,
+          content,
+          tags,
+          type: selectedOption,
+          uid: user.uid,
+        },
+        {
+          withCredentials: true,
+        }
+      );
+
+      console.log("res", response.data);
+
+      toast.dismiss();
+      toast.success("Blog posted successfully!");
+
+      dispatch(setTitle(""));
+      dispatch(setContent(""));
+      dispatch(setTags([]));
+      dispatch(setSelectedOption("Not Set"));
+      setLocalTags([]);
+      setCurrentTag("");
+      setShowInput(false);
+      editor.commands.setContent("");
+    } catch (error) {
+      toast.dismiss();
+      console.error("Error posting blog:", error?.response || error.message);
+      toast.error(
+        error?.response?.data?.message || "Failed to post blog. Try again!"
+      );
+    }
+  };
+
   return (
     <div className="w-full p-6 flex flex-col gap-6">
       <div
@@ -169,7 +255,7 @@ const CreateBlog = () => {
                     key={option}
                     className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
                     onClick={() => {
-                      setSelectedOption(option);
+                      dispatch(setSelectedOption(option));
                       setDropdownOpen(false);
                     }}
                   >
@@ -183,7 +269,7 @@ const CreateBlog = () => {
       </div>
       <h1 className="text-3xl font-bold">Create Blog</h1>
 
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap gap-2 sticky top-0 bg-white z-20 py-2">
         <button
           onClick={() => editor.chain().focus().setHeading({ level: 1 }).run()}
           className="px-4 py-1 bg-gray-200 rounded cursor-pointer"
@@ -289,7 +375,13 @@ const CreateBlog = () => {
           Bullet List
         </button>
       </div>
-
+      <input
+        type="text"
+        placeholder="Enter Blog Title"
+        value={title}
+        onChange={(e) => dispatch(setTitle(e.target.value))}
+        className="w-full text-2xl font-semibold p-2 border-b border-gray-300 outline-none mb-4"
+      />
       <EditorContent editor={editor} className="tiptap" />
       <div className="flex flex-col items-center gap-2 mt-8">
         {/* Tags Display */}
@@ -332,6 +424,12 @@ const CreateBlog = () => {
           </button>
         )}
       </div>
+      <button
+        onClick={handlePostBlog}
+        className="mt-4 px-4 py-2 w-1/2 cursor-pointer self-center text-center bg-gray-300 rounded-full text-sm font-medium hover:bg-gray-400"
+      >
+        Post
+      </button>
     </div>
   );
 };

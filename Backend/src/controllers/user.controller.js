@@ -39,14 +39,7 @@ export const loginWithOneTap = async (req, res) => {
       sameSite: "none",
     });
 
-    const {
-      _id,
-      uid: userUid,
-      createdAt,
-      updatedAt,
-      __v,
-      ...safeUser
-    } = user.toObject();
+    const { createdAt, updatedAt, __v, ...safeUser } = user.toObject();
 
     return res.status(200).json(
       new ApiResponse(200, {
