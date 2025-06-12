@@ -232,16 +232,16 @@ const BlogDetail = () => {
             </p>
             <div className="flex justify-center gap-4">
               <button
-                className="bg-[#303130] text-white px-6 py-2 rounded hover:bg-[#201F1F]"
+                className="bg-[#303130] text-white px-6 py-2 rounded hover:bg-[#201F1F] cursor-pointer"
                 onClick={handleDelete}
               >
-                Yes
+                Yes Delete
               </button>
               <button
-                className="border border-[#504E4F] text-[#201F1F] px-6 py-2 rounded hover:bg-[#F3F3F3]"
+                className="border border-[#504E4F] text-[#201F1F] px-6 py-2 rounded hover:bg-[#F3F3F3] cursor-pointer"
                 onClick={() => setShowConfirmModal(false)}
               >
-                No
+                Not Now
               </button>
             </div>
           </div>
