@@ -18,8 +18,12 @@ const HomePage = () => {
 
   useEffect(() => {
     const fetchBlogs = async () => {
+      setLoading(true);
       try {
-        const res = await axios.get("/api/blogs");
+        const type = activeTab === "social" ? "Article" : "Diary";
+        const res = await axios.get(`/api/blogs/type/${type}`);
+
+        console.log("r",res.data.data)
         setBlogs(res.data.data);
       } catch (err) {
         console.error("Failed to fetch blogs:", err);
@@ -28,9 +32,10 @@ const HomePage = () => {
         setLoading(false);
       }
     };
-
+  
     fetchBlogs();
-  }, []);
+  }, [activeTab]); // Re-run when tab changes
+  
 
   return (
     <>
@@ -147,6 +152,12 @@ const HomePage = () => {
                 <Loader />
               ) : error ? (
                 <p>{error}</p>
+              ) : blogs.length === 0 ? (
+                <div className="flex flex-col items-center justify-center h-[30%] text-[#8e8e8e]">
+                  <span className="text-3xl font-semibold" style={{ fontFamily: "SometypeMono Regular, monospace" }}>
+                    No Blogs Yet!
+                  </span>
+                </div>
               ) : (
                 blogs.map((blog) => (
                   <BlogCard

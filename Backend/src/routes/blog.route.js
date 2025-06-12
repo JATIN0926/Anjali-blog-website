@@ -4,6 +4,7 @@ import {
   deleteBlog,
   getAllBlogs,
   getBlogById,
+  getBlogsByType,
   updateBlog,
 } from "../controllers/blog.controller.js";
 import verifyToken from "../middlewares/verifyToken.js";
@@ -16,5 +17,6 @@ router.get("/", getAllBlogs);
 router.get("/:id", getBlogById);
 router.delete("/delete/:id", verifyToken, isAdmin, deleteBlog);
 router.put("/edit/:id", verifyToken, isAdmin, updateBlog);
+router.get("/type/:type", getBlogsByType);
 
 export default router;

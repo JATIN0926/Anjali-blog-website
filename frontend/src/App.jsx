@@ -6,6 +6,7 @@ import "./App.css";
 import { Toaster } from "react-hot-toast";
 import BlogDetail from "./components/BlogDetail/BlogDetail";
 import EditBlog from "./components/EditBlog/EditBlog";
+import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
 
 function App() {
   return (
@@ -15,9 +16,24 @@ function App() {
         <div className="w-screen max-w-full flex flex-col gap-6">
           <Routes>
             <Route path="/" element={<HomePage />} />
-            <Route path="/create-blog" element={<CreateBlog />} />
+            <Route
+              path="/create-blog"
+              element={
+                <ProtectedRoute adminOnly>
+                  <CreateBlog />
+                </ProtectedRoute>
+              }
+            />
             <Route path="/blog/:id" element={<BlogDetail />} />
-            <Route path="/edit/:id" element={<EditBlog />} />
+            <Route
+              path="/edit/:id"
+              element={
+                <ProtectedRoute adminOnly>
+                  <EditBlog />
+                </ProtectedRoute>
+              }
+            />
+           
           </Routes>
         </div>
       </Router>

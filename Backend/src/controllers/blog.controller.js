@@ -119,3 +119,24 @@ export const updateBlog = async (req, res, next) => {
     next(error);
   }
 };
+
+export const getBlogsByType = async (req, res) => {
+  try {
+    const { type } = req.params;
+
+    if (!type || !["Article", "Diary"].includes(type)) {
+      return res
+        .status(400)
+        .json(new ApiError(400, "Type must be 'article' or 'myDiary'"));
+    }
+
+    const blogs = await Blog.find({ type }).sort({ createdAt: -1 });
+
+    return res
+      .status(200)
+      .json(new ApiResponse(200, blogs, `Fetched ${type} blogs successfully`));
+  } catch (error) {
+    console.error("Error fetching blogs by type:", error);
+    return res.status(500).json(new ApiError(500, "Server error"));
+  }
+};
