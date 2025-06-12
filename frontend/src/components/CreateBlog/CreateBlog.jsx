@@ -24,7 +24,6 @@ const CreateBlog = () => {
     (state) => state.blogDraft
   );
 
-  console.log("b", selectedOption);
   const user = useSelector((state) => state.user.currentUser);
   const storedTags = useSelector((state) => state.blogDraft.tags);
 

@@ -70,3 +70,31 @@ export const logout = async (req, res) => {
     return res.status(500).json(new ApiError(500, "Logout failed"));
   }
 };
+
+export const updateSocialLinks = async (req, res) => {
+  try {
+    const { uid } = req.user;
+    const { linkedin, medium, instagram, email } = req.body;
+
+    const updates = {};
+    if (linkedin !== undefined) updates.linkedin = linkedin;
+    if (medium !== undefined) updates.medium = medium;
+    if (instagram !== undefined) updates.instagram = instagram;
+    if (email !== undefined) updates.email = email;
+
+    const user = await User.findOne({ uid });
+
+    if (!user || !user.isAdmin) {
+      return res.status(403).json({ message: "Access denied" });
+    }
+
+    const updatedUser = await User.findOneAndUpdate({ uid }, updates, {
+      new: true,
+    });
+
+    res.status(200).json({ message: "Socials updated", user: updatedUser });
+  } catch (error) {
+    console.error("Update failed", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};

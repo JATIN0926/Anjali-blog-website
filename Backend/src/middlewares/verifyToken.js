@@ -3,12 +3,15 @@
 import jwt from "jsonwebtoken";
 import User from "../models/user.model.js";
 import { ApiError } from "../utils/ApiError.js";
+import dotenv from "dotenv";
 
-const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret_key";
+dotenv.config();
+const JWT_SECRET = process.env.JWT_SECRET;
 
 const verifyToken = async (req, res, next) => {
   const token = req.cookies?.token;
 
+  console.log(token);
   if (!token) {
     return res
       .status(401)
@@ -16,10 +19,12 @@ const verifyToken = async (req, res, next) => {
   }
 
   try {
+    console.log("j", JWT_SECRET);
     const decoded = jwt.verify(token, JWT_SECRET);
 
     const user = await User.findById(decoded.id);
 
+    console.log(user);
     if (!user) {
       return res.status(404).json(new ApiError(404, "User not found"));
     }

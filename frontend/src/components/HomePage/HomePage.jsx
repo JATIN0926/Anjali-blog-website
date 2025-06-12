@@ -91,6 +91,7 @@ const HomePage = () => {
                     src="/icons/settings.png"
                     alt=""
                     className="object-cover w-full h-full"
+                    onClick={()=> navigate('/settings')}
                   />
                 </div>
               </div>

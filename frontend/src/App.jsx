@@ -7,6 +7,7 @@ import { Toaster } from "react-hot-toast";
 import BlogDetail from "./components/BlogDetail/BlogDetail";
 import EditBlog from "./components/EditBlog/EditBlog";
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
+import SettingsPage from "./components/SettingsPage/SettingsPage";
 
 function App() {
   return (
@@ -33,7 +34,14 @@ function App() {
                 </ProtectedRoute>
               }
             />
-           
+            <Route
+              path="/settings"
+              element={
+                <ProtectedRoute adminOnly>
+                  <SettingsPage />
+                </ProtectedRoute>
+              }
+            />
           </Routes>
         </div>
       </Router>
