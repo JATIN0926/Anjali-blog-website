@@ -51,6 +51,11 @@ const blogSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    next: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Blog",
+      default: null, 
+    },
   },
   {
     timestamps: true,

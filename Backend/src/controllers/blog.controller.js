@@ -21,6 +21,12 @@ export const createBlog = async (req, res) => {
 
     const blogUid = crypto.randomBytes(6).toString("hex");
 
+    let lastDiary = null;
+
+    if (type === "Diary") {
+      lastDiary = await Blog.findOne({ type: "Diary" }).sort({ createdAt: -1 });
+    }
+
     const newBlog = await Blog.create({
       uid: blogUid,
       title,
@@ -30,6 +36,11 @@ export const createBlog = async (req, res) => {
       thumbnail,
       user: user._id,
     });
+
+    if (type === "Diary" && lastDiary) {
+      lastDiary.next = newBlog._id;
+      await lastDiary.save();
+    }
 
     return res.status(201).json(
       new ApiResponse(201, {

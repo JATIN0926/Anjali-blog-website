@@ -153,6 +153,16 @@ const BlogDetail = () => {
           className="tiptap w-full text-[#201F1F]"
           dangerouslySetInnerHTML={{ __html: blog.content }}
         ></div>
+        {blog.type === "Diary" && (
+          <h1
+            className="py-10 text-[1.2rem] tracking-[-0.24px] font-semibold self-center hover:underline cursor-pointer"
+            style={{ fontFamily: "SometypeMono Regular, monospace" }}
+            onClick={() => navigate(`/blog/${blog.next}`)}
+          >
+            Continue to next Journey →
+          </h1>
+        )}
+
         <div className="flex justify-center flex-wrap gap-6 mt-6">
           {blog.tags.map((tag, index) => (
             <span

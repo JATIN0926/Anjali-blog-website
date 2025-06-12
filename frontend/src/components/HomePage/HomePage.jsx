@@ -158,6 +158,7 @@ const HomePage = () => {
                   <span className="text-3xl font-semibold" style={{ fontFamily: "SometypeMono Regular, monospace" }}>
                     No Blogs Yet!
                   </span>
+                  <span className="text-2xl font-semibold hover:underline cursor-pointer text-black" onClick={()=> navigate('/create-blog')}>Create One</span>
                 </div>
               ) : (
                 blogs.map((blog) => (
