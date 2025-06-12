@@ -23,7 +23,7 @@ const HomePage = () => {
         const type = activeTab === "social" ? "Article" : "Diary";
         const res = await axios.get(`/api/blogs/type/${type}`);
 
-        console.log("r",res.data.data)
+        console.log("r", res.data.data);
         setBlogs(res.data.data);
       } catch (err) {
         console.error("Failed to fetch blogs:", err);
@@ -32,10 +32,9 @@ const HomePage = () => {
         setLoading(false);
       }
     };
-  
+
     fetchBlogs();
   }, [activeTab]); // Re-run when tab changes
-  
 
   return (
     <>
@@ -83,7 +82,10 @@ const HomePage = () => {
                 >
                   Write article
                 </button>
-                <button className="underline text-[1.1rem] hover:font-semibold transition-all cursor-pointer" onClick={()=> navigate('/view-stories')}>
+                <button
+                  className="underline text-[1.1rem] hover:font-semibold transition-all cursor-pointer"
+                  onClick={() => navigate("/view-stories")}
+                >
                   View stories
                 </button>
                 <div className="w-[2vw] h-auto cursor-pointer">
@@ -91,7 +93,7 @@ const HomePage = () => {
                     src="/icons/settings.png"
                     alt=""
                     className="object-cover w-full h-full"
-                    onClick={()=> navigate('/settings')}
+                    onClick={() => navigate("/settings")}
                   />
                 </div>
               </div>
@@ -155,10 +157,18 @@ const HomePage = () => {
                 <p>{error}</p>
               ) : blogs.length === 0 ? (
                 <div className="flex flex-col items-center justify-center h-[30%] text-[#8e8e8e]">
-                  <span className="text-3xl font-semibold" style={{ fontFamily: "SometypeMono Regular, monospace" }}>
+                  <span
+                    className="text-3xl font-semibold"
+                    style={{ fontFamily: "SometypeMono Regular, monospace" }}
+                  >
                     No Blogs Yet!
                   </span>
-                  <span className="text-2xl font-semibold hover:underline cursor-pointer text-black" onClick={()=> navigate('/create-blog')}>Create One</span>
+                  <a
+                    href="/create-blog"
+                    className="text-blue-600 underline text-lg transition-opacity duration-300 hover:opacity-80"
+                  >
+                    Create one →
+                  </a>
                 </div>
               ) : (
                 blogs.map((blog) => (
