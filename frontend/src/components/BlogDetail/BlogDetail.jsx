@@ -98,9 +98,15 @@ const BlogDetail = () => {
                 year: "numeric",
               })}
             </p>
-            <button className=" text-[0.9rem] border border-[#504E4F] px-3 py-0.5">
-              Subscribe
-            </button>
+            {user?.isAdmin ? (
+              <button className=" text-[0.9rem] bg-[#E7E6E6] px-3 py-0.5">
+                Published
+              </button>
+            ) : (
+              <button className=" text-[0.9rem] border border-[#504E4F] px-3 py-0.5">
+                Subscribe
+              </button>
+            )}
           </div>
         </div>
         <div className="w-full flex items-center justify-between border-y border-y-[#E7EAEE]">
@@ -153,16 +159,15 @@ const BlogDetail = () => {
           className="tiptap w-full text-[#201F1F]"
           dangerouslySetInnerHTML={{ __html: blog.content }}
         ></div>
-        {blog.type === "Diary" &&
-          blog.next && (
-              <h1
-                className="py-10 text-[1.2rem] tracking-[-0.24px] font-semibold self-center hover:underline cursor-pointer"
-                style={{ fontFamily: "SometypeMono Regular, monospace" }}
-                onClick={() => navigate(`/blog/${blog.next}`)}
-              >
-                Continue to next Journey →
-              </h1>
-            )}
+        {blog.type === "Diary" && blog.next && (
+          <h1
+            className="py-10 text-[1.2rem] tracking-[-0.24px] font-semibold self-center hover:underline cursor-pointer"
+            style={{ fontFamily: "SometypeMono Regular, monospace" }}
+            onClick={() => navigate(`/blog/${blog.next}`)}
+          >
+            Continue to next Journey →
+          </h1>
+        )}
 
         <div className="flex justify-center flex-wrap gap-6 mt-6">
           {blog.tags.map((tag, index) => (

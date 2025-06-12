@@ -78,9 +78,7 @@ const Footer = () => {
           </button>
         </div>
         <div className="flex flex-col items-start ">
-          <p className="text-[0.75rem] text-[#201F1F]">
-            {user?.name || "Anjali Chaudhary"}
-          </p>
+          <p className="text-[0.75rem] text-[#201F1F]">Anjali Chaudhary</p>
           <p className="text-[0.75rem] text-[#201F1F]">Copyright © 2025</p>
         </div>
       </div>
@@ -89,19 +87,38 @@ const Footer = () => {
       <div className="w-[30%] flex gap-4">
         <div className="flex flex-col items-center justify-center gap-8">
           <div className="flex flex-col gap-1">
-            <p className="underline text-[#201F1F] w-max text-[0.8rem] tracking-[-0.24px] cursor-pointer">
+            <a
+              href={user.twitter}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline text-[#201F1F] w-max text-[0.8rem] tracking-[-0.24px] cursor-pointer"
+            >
               Twitter
-            </p>
-            <p className="underline text-[#201F1F] w-max text-[0.8rem] tracking-[-0.24px] cursor-pointer">
+            </a>
+            <a
+              href={user.instagram}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline text-[#201F1F] w-max text-[0.8rem] tracking-[-0.24px] cursor-pointer"
+            >
               Instagram
-            </p>
-            <p className="underline text-[#201F1F] w-max text-[0.8rem] tracking-[-0.24px] cursor-pointer">
+            </a>
+            <a
+              href={user.linkedin}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline text-[#201F1F] w-max text-[0.8rem] tracking-[-0.24px] cursor-pointer"
+            >
               LinkedIn
-            </p>
-            <p className="underline text-[#201F1F] w-max text-[0.8rem] tracking-[-0.24px] cursor-pointer">
+            </a>
+            <a
+              href={`mailto:${user.email}`}
+              className="underline text-[#201F1F] w-max text-[0.8rem] tracking-[-0.24px] cursor-pointer"
+            >
               Email me
-            </p>
+            </a>
           </div>
+
           {user?.isAdmin ? (
             <button
               className="bg-[#DEDEDE] px-4 py-2 rounded-xl text-[0.9rem] cursor-pointer"
