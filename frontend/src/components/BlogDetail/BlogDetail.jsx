@@ -10,6 +10,8 @@ const BlogDetail = () => {
   const navigate = useNavigate();
   const [blog, setBlog] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+
   const user = useSelector((state) => state.user.currentUser);
 
   useEffect(() => {
@@ -28,6 +30,7 @@ const BlogDetail = () => {
   }, [id]);
 
   const handleDelete = async () => {
+    setShowConfirmModal(false); // Hide modal first
     const toastId = toast.loading("Deleting blog...");
     try {
       await axios.delete(`/api/blogs/delete/${id}`);
@@ -134,7 +137,7 @@ const BlogDetail = () => {
                   src="/icons/delete.svg"
                   alt="Arrow"
                   className="w-6 h-6 cursor-pointer"
-                  onClick={handleDelete}
+                  onClick={() => setShowConfirmModal(true)}
                 />
               </>
             )}
@@ -218,6 +221,32 @@ const BlogDetail = () => {
           </p>
         </div>
       </div>
+      {showConfirmModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm">
+          <div
+            className="bg-white border border-[#504E4F] rounded-md p-6 w-[90%] max-w-md text-center shadow-lg"
+            style={{ fontFamily: "SometypeMono Regular, monospace" }}
+          >
+            <p className="text-[#201F1F] text-xl mb-6">
+              Are you sure you want to delete this blog?
+            </p>
+            <div className="flex justify-center gap-4">
+              <button
+                className="bg-[#303130] text-white px-6 py-2 rounded hover:bg-[#201F1F]"
+                onClick={handleDelete}
+              >
+                Yes
+              </button>
+              <button
+                className="border border-[#504E4F] text-[#201F1F] px-6 py-2 rounded hover:bg-[#F3F3F3]"
+                onClick={() => setShowConfirmModal(false)}
+              >
+                No
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -20,6 +20,12 @@ const blogSchema = new mongoose.Schema(
       enum: ["Diary", "Article"],
       default: "Not Set",
     },
+    status: {
+      type: String,
+      enum: ["Published", "Draft"],
+      default: "Draft",
+      required: true,
+    },
     uid: {
       type: String,
       required: true,
