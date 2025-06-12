@@ -8,6 +8,7 @@ import BlogDetail from "./components/BlogDetail/BlogDetail";
 import EditBlog from "./components/EditBlog/EditBlog";
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
 import SettingsPage from "./components/SettingsPage/SettingsPage";
+import ViewStories from "./components/ViewStories/ViewStories";
 
 function App() {
   return (
@@ -39,6 +40,14 @@ function App() {
               element={
                 <ProtectedRoute adminOnly>
                   <SettingsPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/view-stories"
+              element={
+                <ProtectedRoute adminOnly>
+                  <ViewStories />
                 </ProtectedRoute>
               }
             />

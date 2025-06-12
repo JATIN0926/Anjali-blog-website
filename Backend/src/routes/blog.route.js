@@ -4,6 +4,8 @@ import {
   deleteBlog,
   getAllBlogs,
   getBlogById,
+  getBlogsByStatus,
+  getBlogsByStatusAndType,
   getBlogsByType,
   updateBlog,
 } from "../controllers/blog.controller.js";
@@ -14,9 +16,11 @@ const router = express.Router();
 
 router.post("/create", verifyToken, isAdmin, createBlog);
 router.get("/", getAllBlogs);
-router.get("/:id", getBlogById);
+router.get("/status-type", getBlogsByStatusAndType);
+router.get("/status/:status", getBlogsByStatus);
 router.delete("/delete/:id", verifyToken, isAdmin, deleteBlog);
 router.put("/edit/:id", verifyToken, isAdmin, updateBlog);
 router.get("/type/:type", getBlogsByType);
+router.get("/:id", getBlogById);
 
 export default router;

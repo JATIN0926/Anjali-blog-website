@@ -22,12 +22,12 @@ const EditBlog = () => {
   const [tags, setTags] = useState([]);
   const [type, setType] = useState("");
   const [thumbnail, setThumbnail] = useState("");
+  const [status, setStatus] = useState("Draft");
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [currentTag, setCurrentTag] = useState("");
   const [showInput, setShowInput] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  // ✅ Correct: initialize useEditor at top level
   const editor = useEditor({
     extensions: [
       StarterKit.configure({ paragraph: false }),
@@ -51,6 +51,7 @@ const EditBlog = () => {
         setTags(tags || []);
         setType(type);
         setThumbnail(thumbnail);
+        setStatus(status || "Draft");
 
         if (editor) {
           editor.commands.setContent(content);
@@ -173,7 +174,7 @@ const EditBlog = () => {
     setTags(tags.filter((_, idx) => idx !== indexToDelete));
   };
 
-  const handleUpdateBlog = async () => {
+  const handleUpdateBlog = async (newStatus) => {
     const updatedContent = editor?.getHTML();
     if (!title.trim() || !updatedContent || !tags.length || !type) {
       return toast.error("Please fill all fields.");
@@ -190,14 +191,26 @@ const EditBlog = () => {
       });
       const res = await axios.put(
         `/api/blogs/edit/${id}`,
-        { title, content: updatedContent, tags, type, thumbnail },
+        {
+          title,
+          content: updatedContent,
+          tags,
+          type,
+          thumbnail,
+          status: newStatus,
+        },
         { withCredentials: true }
       );
 
       console.log("res", res.data);
       toast.dismiss();
-      toast.success("Blog updated!");
-      navigate(`/blog/${id}`);
+      toast.success(
+        newStatus === "Published" ? "Blog published!" : "Draft saved."
+      );
+
+      if (newStatus === "Published") {
+        navigate(`/blog/${id}`);
+      }
     } catch (err) {
       toast.dismiss();
       toast.error("Failed to update.");
@@ -431,12 +444,20 @@ const EditBlog = () => {
         )}
       </div>
 
-      <button
-        onClick={handleUpdateBlog}
-        className="mt-4 px-4 py-2 w-1/2 cursor-pointer self-center bg-gray-300 rounded-full text-sm font-medium hover:bg-gray-400"
-      >
-        Update
-      </button>
+      <div className="flex gap-4 justify-center mt-8">
+        <button
+          onClick={() => handleUpdateBlog("Draft")}
+          className="px-4 py-2 bg-gray-300 rounded-full text-sm font-medium hover:bg-gray-400"
+        >
+          Save to Draft
+        </button>
+        <button
+          onClick={() => handleUpdateBlog("Published")}
+          className="px-4 py-2 bg-green-400 rounded-full text-sm font-medium hover:bg-green-500"
+        >
+          Publish
+        </button>
+      </div>
     </div>
   );
 };

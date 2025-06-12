@@ -83,7 +83,7 @@ const HomePage = () => {
                 >
                   Write article
                 </button>
-                <button className="underline text-[1.1rem] hover:font-semibold transition-all cursor-pointer">
+                <button className="underline text-[1.1rem] hover:font-semibold transition-all cursor-pointer" onClick={()=> navigate('/view-stories')}>
                   View stories
                 </button>
                 <div className="w-[2vw] h-auto cursor-pointer">

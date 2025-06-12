@@ -220,19 +220,28 @@ const CreateBlog = () => {
     }
   };
 
-  const handlePostBlog = async () => {
-    if (
-      !title.trim() ||
-      !content.trim() ||
-      tags.length === 0 ||
-      !selectedOption
-    ) {
-      toast.error("Please fill all required fields.");
-      return;
+  const handleSubmitBlog = async (status) => {
+    if (status === "published") {
+      if (
+        !title.trim() ||
+        !content.trim() ||
+        tags.length === 0 ||
+        !selectedOption
+      ) {
+        toast.error("Please fill all required fields.");
+        return;
+      }
+    } else if (status === "draft") {
+      if (!title.trim() && !content.trim()) {
+        toast.error("Nothing to save in draft.");
+        return;
+      }
     }
 
     try {
-      toast.loading("Posting your blog...");
+      toast.loading(
+        status === "published" ? "Posting your blog..." : "Saving draft..."
+      );
 
       const response = await axios.post(
         `/api/blogs/create`,
@@ -243,32 +252,36 @@ const CreateBlog = () => {
           type: selectedOption,
           thumbnail,
           uid: user.uid,
+          status,
         },
-        {
-          withCredentials: true,
-        }
+        { withCredentials: true }
       );
 
-      console.log("res", response.data);
-
       toast.dismiss();
-      toast.success("Blog posted successfully!");
+      toast.success(
+        status === "published"
+          ? "Blog posted successfully!"
+          : "Draft saved successfully!"
+      );
 
-      dispatch(setTitle(""));
-      dispatch(setContent(""));
-      dispatch(setTags([]));
-      dispatch(setSelectedOption(""));
-      dispatch(setThumbnail(""));
-      setLocalTags([]);
-      setCurrentTag("");
-      setShowInput(false);
-      editor.commands.setContent("");
+      // Reset if published
+      if (status === "published") {
+        dispatch(setTitle(""));
+        dispatch(setContent(""));
+        dispatch(setTags([]));
+        dispatch(setSelectedOption(""));
+        dispatch(setThumbnail(""));
+        setLocalTags([]);
+        setCurrentTag("");
+        setShowInput(false);
+        editor.commands.setContent("");
+      }
     } catch (error) {
       toast.dismiss();
-      console.error("Error posting blog:", error?.response || error.message);
       toast.error(
-        error?.response?.data?.message || "Failed to post blog. Try again!"
+        error?.response?.data?.message || "Failed to submit blog. Try again!"
       );
+      console.error("Error:", error?.response || error.message);
     }
   };
 
@@ -492,10 +505,16 @@ const CreateBlog = () => {
         )}
       </div>
       <button
-        onClick={handlePostBlog}
+        onClick={() => handleSubmitBlog("published")}
         className="mt-4 px-4 py-2 w-1/2 cursor-pointer self-center text-center bg-gray-300 rounded-full text-sm font-medium hover:bg-gray-400"
       >
         Post
+      </button>
+      <button
+        onClick={() => handleSubmitBlog("draft")}
+        className="mt-4 px-4 py-2 w-1/2 cursor-pointer self-center text-center bg-yellow-300 rounded-full text-sm font-medium hover:bg-yellow-400"
+      >
+        Save to Draft
       </button>
     </div>
   );

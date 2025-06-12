@@ -79,7 +79,10 @@ const SettingsPage = () => {
       </div>
 
       <div className="w-[60%] justify-self-center pt-16 flex flex-col gap-16">
-        <h1 className="text-5xl font-semibold font-serif text-black">
+        <h1
+          className="text-5xl font-semibold font-serif text-black"
+          style={{ fontFamily: "ScheherazadeNew Regular, monospace" }}
+        >
           Settings
         </h1>
 

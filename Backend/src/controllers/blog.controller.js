@@ -8,10 +8,14 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 // @route   POST /api/blogs
 export const createBlog = async (req, res) => {
   try {
-    const { title, content, tags, type, uid, thumbnail } = req.body;
+    const { title, content, tags, type, uid, thumbnail, status } = req.body;
 
     if (!title || !content || !uid) {
       return res.status(400).json(new ApiError(400, "Missing required fields"));
+    }
+
+    if (status && !["Draft", "Published"].includes(status)) {
+      return res.status(400).json(new ApiError(400, "Invalid blog status"));
     }
 
     const user = await User.findOne({ uid });
@@ -35,6 +39,7 @@ export const createBlog = async (req, res) => {
       type,
       thumbnail,
       user: user._id,
+      status: status || "Draft",
     });
 
     if (type === "Diary" && lastDiary) {
@@ -104,10 +109,14 @@ export const deleteBlog = async (req, res) => {
 export const updateBlog = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { title, content, tags, type, thumbnail } = req.body;
+    const { title, content, tags, type, thumbnail, status } = req.body;
 
     if (!title || !content || !tags || !type) {
       throw new ApiError(400, "All fields are required.");
+    }
+
+    if (status && !["Draft", "Published"].includes(status)) {
+      throw new ApiError(400, "Invalid blog status.");
     }
 
     const blog = await Blog.findById(id);
@@ -120,6 +129,7 @@ export const updateBlog = async (req, res, next) => {
     blog.tags = tags;
     blog.type = type;
     blog.thumbnail = thumbnail;
+    blog.status = status || blog.status;
 
     const updatedBlog = await blog.save();
 
@@ -138,7 +148,7 @@ export const getBlogsByType = async (req, res) => {
     if (!type || !["Article", "Diary"].includes(type)) {
       return res
         .status(400)
-        .json(new ApiError(400, "Type must be 'article' or 'myDiary'"));
+        .json(new ApiError(400, "Type must be 'Article' or 'Diary'"));
     }
 
     const blogs = await Blog.find({ type }).sort({ createdAt: -1 });
@@ -148,6 +158,51 @@ export const getBlogsByType = async (req, res) => {
       .json(new ApiResponse(200, blogs, `Fetched ${type} blogs successfully`));
   } catch (error) {
     console.error("Error fetching blogs by type:", error);
+    return res.status(500).json(new ApiError(500, "Server error"));
+  }
+};
+
+// @desc    Get blogs by status (Draft / Published)
+// @route   GET /api/blogs/status/:status
+export const getBlogsByStatus = async (req, res) => {
+  try {
+    const { status } = req.params;
+
+    if (!["Draft", "Published"].includes(status)) {
+      return res.status(400).json(new ApiError(400, "Invalid status"));
+    }
+
+    const blogs = await Blog.find({ status }).sort({ updatedAt: -1 });
+
+    return res
+      .status(200)
+      .json(new ApiResponse(200, blogs, `Fetched ${status} blogs`));
+  } catch (error) {
+    console.error("Error fetching blogs by status:", error);
+    return res.status(500).json(new ApiError(500, "Server error"));
+  }
+};
+// @desc    Get blogs by status and type
+// @route   GET /api/blogs/status-type?status=Published&type=Diary
+export const getBlogsByStatusAndType = async (req, res) => {
+  try {
+    const { status, type } = req.query;
+
+    if (!["Draft", "Published"].includes(status)) {
+      return res.status(400).json(new ApiError(400, "Invalid status"));
+    }
+
+    if (!["Diary", "Article"].includes(type)) {
+      return res.status(400).json(new ApiError(400, "Invalid type"));
+    }
+
+    const blogs = await Blog.find({ status, type }).sort({ updatedAt: -1 });
+
+    return res
+      .status(200)
+      .json(new ApiResponse(200, blogs, `Fetched ${status} ${type} blogs`));
+  } catch (error) {
+    console.error("Error fetching blogs by status and type:", error);
     return res.status(500).json(new ApiError(500, "Server error"));
   }
 };
