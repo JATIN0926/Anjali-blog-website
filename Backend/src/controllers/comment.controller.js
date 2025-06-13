@@ -3,7 +3,6 @@ import Comment from "../models/comment.model.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { ApiError } from "../utils/ApiError.js";
 
-// ✅ Create Comment (Already done)
 export const createComment = async (req, res, next) => {
   const { blogId, content, parentCommentId = null } = req.body;
   const userId = req.user._id;

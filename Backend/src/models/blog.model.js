@@ -39,10 +39,12 @@ const blogSchema = new mongoose.Schema(
       type: Number,
       default: 1,
     },
-    likes: {
-      type: Number,
-      default: 0,
-    },
+    likes: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
     datePosted: {
       type: Date,
       default: Date.now,
@@ -54,7 +56,7 @@ const blogSchema = new mongoose.Schema(
     next: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Blog",
-      default: null, 
+      default: null,
     },
   },
   {

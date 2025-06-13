@@ -221,7 +221,7 @@ const CreateBlog = () => {
   };
 
   const handleSubmitBlog = async (status) => {
-    if (status === "published") {
+    if (status === "Published") {
       if (
         !title.trim() ||
         !content.trim() ||
@@ -231,7 +231,7 @@ const CreateBlog = () => {
         toast.error("Please fill all required fields.");
         return;
       }
-    } else if (status === "draft") {
+    } else if (status === "Draft") {
       if (!title.trim() && !content.trim()) {
         toast.error("Nothing to save in draft.");
         return;
@@ -240,7 +240,7 @@ const CreateBlog = () => {
 
     try {
       toast.loading(
-        status === "published" ? "Posting your blog..." : "Saving draft..."
+        status === "Published" ? "Posting your blog..." : "Saving draft..."
       );
 
       const response = await axios.post(
@@ -259,13 +259,13 @@ const CreateBlog = () => {
 
       toast.dismiss();
       toast.success(
-        status === "published"
+        status === "Published"
           ? "Blog posted successfully!"
           : "Draft saved successfully!"
       );
 
       // Reset if published
-      if (status === "published") {
+      if (status === "Published") {
         dispatch(setTitle(""));
         dispatch(setContent(""));
         dispatch(setTags([]));
@@ -505,13 +505,13 @@ const CreateBlog = () => {
         )}
       </div>
       <button
-        onClick={() => handleSubmitBlog("published")}
+        onClick={() => handleSubmitBlog("Published")}
         className="mt-4 px-4 py-2 w-1/2 cursor-pointer self-center text-center bg-gray-300 rounded-full text-sm font-medium hover:bg-gray-400"
       >
         Post
       </button>
       <button
-        onClick={() => handleSubmitBlog("draft")}
+        onClick={() => handleSubmitBlog("Draft")}
         className="mt-4 px-4 py-2 w-1/2 cursor-pointer self-center text-center bg-yellow-300 rounded-full text-sm font-medium hover:bg-yellow-400"
       >
         Save to Draft

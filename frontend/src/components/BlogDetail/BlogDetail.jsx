@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Loader from "../Loader/Loader";
@@ -20,8 +20,9 @@ const BlogDetail = () => {
   const [replyText, setReplyText] = useState("");
   const [menuOpenId, setMenuOpenId] = useState(null);
   const [visibleReplies, setVisibleReplies] = useState({});
-
   const user = useSelector((state) => state.user.currentUser);
+  const hasLiked = user && blog?.likes.includes(user._id);
+  const commentSectionRef = useRef(null);
 
   useEffect(() => {
     const fetchBlog = async () => {
@@ -228,6 +229,31 @@ const BlogDetail = () => {
     }));
   };
 
+  const handleToggleBlogLike = async () => {
+    try {
+      const res = await axios.put(
+        `/api/blogs/toggle-like/${blog._id}`,
+        {},
+        { withCredentials: true }
+      );
+
+      setBlog((prev) => ({
+        ...prev,
+        likes: res.data.data.likes,
+      }));
+    } catch (err) {
+      console.error("Blog like toggle failed:", err);
+      toast.error("Failed to toggle like");
+    }
+  };
+
+  const handleScrollToComments = () => {
+    commentSectionRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  };
+
   if (loading) return <Loader />;
 
   if (!blog)
@@ -299,7 +325,7 @@ const BlogDetail = () => {
           <div className=" py-2 flex items-center justify-center gap-5">
             <div className="flex items-center justify-center gap-2">
               <img
-                src="/icons/likeIcon.svg"
+                src={hasLiked ? "/icons/liked.svg" : "/icons/likeIcon.svg"}
                 alt="Arrow"
                 className="w-6 h-6 cursor-pointer"
               />
@@ -307,13 +333,14 @@ const BlogDetail = () => {
                 className="text-base text-[#504E4F]"
                 style={{ fontFamily: "Inter, sans-serif " }}
               >
-                {blog.likes}
+                {blog?.likes.length}
               </p>
             </div>
             <img
               src="/icons/comment.svg"
               alt="Arrow"
               className="w-6 h-6 cursor-pointer"
+              onClick={handleScrollToComments}
             />
           </div>
           <div className="flex items-center justify-center gap-5">
@@ -369,7 +396,8 @@ const BlogDetail = () => {
           <div className=" py-2 flex items-center justify-center gap-5">
             <div className="flex items-center justify-center gap-2">
               <img
-                src="/icons/likeIcon.svg"
+                src={hasLiked ? "/icons/liked.svg" : "/icons/likeIcon.svg"}
+                onClick={handleToggleBlogLike}
                 alt="Arrow"
                 className="w-6 h-6 cursor-pointer"
               />
@@ -377,13 +405,14 @@ const BlogDetail = () => {
                 className="text-base text-[#504E4F]"
                 style={{ fontFamily: "Inter, sans-serif " }}
               >
-                {blog.likes}
+                {blog?.likes.length}
               </p>
             </div>
             <img
               src="/icons/comment.svg"
               alt="Arrow"
               className="w-6 h-6 cursor-pointer"
+              onClick={handleScrollToComments}
             />
           </div>
           <div className="flex items-center justify-center gap-5">
@@ -411,7 +440,10 @@ const BlogDetail = () => {
           </div>
         </div>
         {/* Future scope: Comments section */}
-        <div className="mt-10 flex flex-col items-start justify-center gap-8">
+        <div
+          ref={commentSectionRef}
+          className="mt-10 flex flex-col items-start justify-center gap-8"
+        >
           <h2
             className="text-4xl font-semibold mb-5"
             style={{ fontFamily: "ScheherazadeNew Regular, monospace" }}

@@ -10,11 +10,14 @@ export const createBlog = async (req, res) => {
   try {
     const { title, content, tags, type, uid, thumbnail, status } = req.body;
 
+    console.log("inside");
     if (!title || !content || !uid) {
+      console.log("inside2");
       return res.status(400).json(new ApiError(400, "Missing required fields"));
     }
-
+    
     if (status && !["Draft", "Published"].includes(status)) {
+      console.log("inside3");
       return res.status(400).json(new ApiError(400, "Invalid blog status"));
     }
 
@@ -204,5 +207,33 @@ export const getBlogsByStatusAndType = async (req, res) => {
   } catch (error) {
     console.error("Error fetching blogs by status and type:", error);
     return res.status(500).json(new ApiError(500, "Server error"));
+  }
+};
+
+export const toggleBlogLike = async (req, res) => {
+  try {
+    const blogId = req.params.id;
+    const userId = req.user._id; // You must have `authenticateUser` middleware to populate this
+
+    const blog = await Blog.findById(blogId);
+    if (!blog) {
+      throw new ApiError(404, "Blog not found");
+    }
+
+    const index = blog.likes.indexOf(userId);
+    if (index === -1) {
+      blog.likes.push(userId); // Like
+    } else {
+      blog.likes.splice(index, 1); // Unlike
+    }
+
+    await blog.save();
+
+    return res
+      .status(200)
+      .json(new ApiResponse(200, { likes: blog.likes }, "Blog like toggled"));
+  } catch (error) {
+    console.error("Like toggle failed:", error);
+    return res.status(500).json(new ApiError(500, "Failed to toggle like"));
   }
 };
