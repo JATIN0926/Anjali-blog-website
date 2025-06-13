@@ -88,7 +88,7 @@ const Footer = () => {
         <div className="flex flex-col items-center justify-center gap-8">
           <div className="flex flex-col gap-1">
             <a
-              href={user.twitter}
+              href={user?.twitter}
               target="_blank"
               rel="noopener noreferrer"
               className="underline text-[#201F1F] w-max text-[0.8rem] tracking-[-0.24px] cursor-pointer"
@@ -96,7 +96,7 @@ const Footer = () => {
               Twitter
             </a>
             <a
-              href={user.instagram}
+              href={user?.instagram}
               target="_blank"
               rel="noopener noreferrer"
               className="underline text-[#201F1F] w-max text-[0.8rem] tracking-[-0.24px] cursor-pointer"
@@ -104,7 +104,7 @@ const Footer = () => {
               Instagram
             </a>
             <a
-              href={user.linkedin}
+              href={user?.linkedin}
               target="_blank"
               rel="noopener noreferrer"
               className="underline text-[#201F1F] w-max text-[0.8rem] tracking-[-0.24px] cursor-pointer"
@@ -112,7 +112,7 @@ const Footer = () => {
               LinkedIn
             </a>
             <a
-              href={`mailto:${user.email}`}
+              href={`mailto:${user?.email}`}
               className="underline text-[#201F1F] w-max text-[0.8rem] tracking-[-0.24px] cursor-pointer"
             >
               Email me

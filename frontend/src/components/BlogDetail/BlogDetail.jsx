@@ -5,12 +5,21 @@ import Loader from "../Loader/Loader";
 import { useSelector } from "react-redux";
 import "../CreateBlog/style.css";
 import toast from "react-hot-toast";
+import Footer from "../HomePage/Footer/Footer";
 const BlogDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [blog, setBlog] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [comments, setComments] = useState([]);
+  const [commentText, setCommentText] = useState("");
+  const [editingCommentId, setEditingCommentId] = useState(null);
+  const [editedContent, setEditedContent] = useState("");
+  const [activeReplyBoxId, setActiveReplyBoxId] = useState(null);
+  const [replyText, setReplyText] = useState("");
+  const [menuOpenId, setMenuOpenId] = useState(null);
+  const [visibleReplies, setVisibleReplies] = useState({});
 
   const user = useSelector((state) => state.user.currentUser);
 
@@ -26,8 +35,28 @@ const BlogDetail = () => {
       }
     };
 
+    const fetchComments = async () => {
+      try {
+        const res = await axios.get(`/api/comments/${id}`);
+        setComments(res.data.data);
+      } catch (err) {
+        console.error("Error fetching comments:", err);
+      }
+    };
+
     fetchBlog();
+    fetchComments();
   }, [id]);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (!e.target.closest(".comment-options")) {
+        setMenuOpenId(null);
+      }
+    };
+    window.addEventListener("click", handleClickOutside);
+    return () => window.removeEventListener("click", handleClickOutside);
+  }, []);
 
   const handleDelete = async () => {
     setShowConfirmModal(false); // Hide modal first
@@ -40,6 +69,163 @@ const BlogDetail = () => {
       toast.error("Failed to delete blog", { id: toastId });
       console.error("Delete error:", err);
     }
+  };
+
+  const handleAddComment = async () => {
+    if (!commentText.trim()) return toast.error("Please write a comment");
+
+    try {
+      const res = await axios.post(
+        `/api/comments/create`,
+        {
+          blogId: id,
+          content: commentText,
+        },
+        {
+          withCredentials: true,
+        }
+      );
+
+      // Add the new comment on top
+      setComments([res.data.data, ...comments]);
+      setCommentText("");
+    } catch (err) {
+      console.error("Failed to post comment", err);
+      toast.error("Failed to post comment");
+    }
+  };
+
+  const handleSaveEdit = async (commentId) => {
+    if (!editedContent.trim()) return toast.error("Comment cannot be empty");
+    try {
+      await axios.put(
+        `/api/comments/edit/${commentId}`,
+        { content: editedContent },
+        { withCredentials: true }
+      );
+      setComments((prev) =>
+        prev.map((comment) => {
+          if (comment._id === commentId) {
+            // top-level comment
+            return { ...comment, content: editedContent };
+          } else {
+            // check replies
+            return {
+              ...comment,
+              replies: comment.replies.map((reply) =>
+                reply._id === commentId
+                  ? { ...reply, content: editedContent }
+                  : reply
+              ),
+            };
+          }
+        })
+      );
+
+      setEditingCommentId(null);
+      setEditedContent("");
+      toast.success("Comment updated");
+    } catch (err) {
+      console.error("Edit failed:", err);
+      toast.error("Failed to update comment");
+    }
+  };
+
+  const handleDeleteComment = async (commentId) => {
+    try {
+      await axios.delete(`/api/comments/delete/${commentId}`, {
+        withCredentials: true,
+      });
+      setComments((prev) =>
+        prev
+          .filter((comment) => comment._id !== commentId) // delete top-level if matched
+          .map((comment) => ({
+            ...comment,
+            replies: comment.replies.filter((reply) => reply._id !== commentId), // delete reply if matched
+          }))
+      );
+
+      toast.success("Comment deleted");
+    } catch (err) {
+      console.error("Delete failed:", err);
+      toast.error("Failed to delete comment");
+    }
+  };
+
+  const handleToggleLike = async (commentId) => {
+    try {
+      const res = await axios.put(
+        `/api/comments/toggle-like/${commentId}`,
+        {},
+        {
+          withCredentials: true,
+        }
+      );
+
+      setComments((prev) =>
+        prev.map((comment) => {
+          if (comment._id === commentId) {
+            // top-level comment
+            return { ...comment, likes: res.data.likes };
+          } else {
+            // check replies
+            return {
+              ...comment,
+              replies: comment.replies.map((reply) =>
+                reply._id === commentId
+                  ? { ...reply, likes: res.data.likes }
+                  : reply
+              ),
+            };
+          }
+        })
+      );
+    } catch (err) {
+      console.error("Toggle like failed:", err);
+      toast.error("Could not update like status");
+    }
+  };
+
+  const handleReplySubmit = async (parentCommentId) => {
+    if (!replyText.trim()) return toast.error("Reply cannot be empty");
+
+    try {
+      const res = await axios.post(
+        "/api/comments/reply",
+        {
+          blogId: id,
+          parentCommentId,
+          content: replyText,
+        },
+        { withCredentials: true }
+      );
+
+      // Add new reply under the correct parent comment
+      setComments((prev) =>
+        prev.map((comment) =>
+          comment._id === parentCommentId
+            ? {
+                ...comment,
+                replies: [res.data.data, ...(comment.replies || [])],
+              }
+            : comment
+        )
+      );
+
+      setReplyText("");
+      setActiveReplyBoxId(null);
+      toast.success("Reply posted");
+    } catch (err) {
+      console.error("Reply failed:", err);
+      toast.error("Failed to post reply");
+    }
+  };
+
+  const toggleRepliesVisibility = (commentId) => {
+    setVisibleReplies((prev) => ({
+      ...prev,
+      [commentId]: !prev[commentId],
+    }));
   };
 
   if (loading) return <Loader />;
@@ -225,16 +411,365 @@ const BlogDetail = () => {
           </div>
         </div>
         {/* Future scope: Comments section */}
-        <div className="mt-10">
+        <div className="mt-10 flex flex-col items-start justify-center gap-8">
           <h2
             className="text-4xl font-semibold mb-5"
             style={{ fontFamily: "ScheherazadeNew Regular, monospace" }}
           >
             Comments
           </h2>
-          <p style={{ fontFamily: "SometypeMono Regular, monospace" }}>
-            (Coming soon...)
-          </p>
+          {/* Comment input box */}
+          {user && (
+            <div className="flex flex-col items-start justify-center gap-4 w-full border-b border-b-[#E7E6E6] py-8">
+              <div className="flex items-center justify-center gap-2">
+                <img
+                  src={
+                    user?.photoURL ||
+                    "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png"
+                  }
+                  alt="avatar"
+                  className="w-10 h-10 rounded-full"
+                />
+                <div className="flex flex-col items-start justify-center">
+                  <h3 className="text-lg font-semibold">{user.name}</h3>
+                  <p className="text-sm text-[#777]">
+                    {new Date().toLocaleDateString("en-US", {
+                      month: "long",
+                      day: "numeric",
+                      year: "numeric",
+                    })}
+                  </p>
+                </div>
+              </div>
+              <div className="flex-1 w-full">
+                <textarea
+                  rows={1}
+                  value={commentText}
+                  onChange={(e) => setCommentText(e.target.value)}
+                  placeholder="What you think?"
+                  style={{ fontFamily: "Inter, sans-serif " }}
+                  className="w-full mt-2 p-2 border border-[#ccc] bg-[#F6F5F5] rounded resize-none placeholder:text-[#B1AFB0] font-medium"
+                />
+              </div>
+              <button
+                onClick={handleAddComment}
+                className="mt-2 bg-[#303130] text-white px-4 py-1 rounded hover:bg-[#201F1F] cursor-pointer"
+              >
+                Add Comment
+              </button>
+            </div>
+          )}
+
+          {/* Comment list */}
+          {comments.length === 0 ? (
+            <p className="text-gray-500 mt-8 text-center flex justify-self-center">
+              No comments yet.
+            </p>
+          ) : (
+            <div className="mt-8 flex flex-col gap-10 w-full">
+              {comments.map((c) => (
+                <div
+                  key={c._id}
+                  className="flex flex-col items-start justify-center gap-6 w-full border-b border-b-[#E7E6E6] py-8"
+                >
+                  <div className="flex items-center justify-center gap-2">
+                    <img
+                      src={user?.photoURL}
+                      alt="avatar"
+                      className="w-10 h-10 rounded-full"
+                    />
+                    <div className="flex flex-col items-start justify-center">
+                      <h3 className="text-lg font-semibold"> {user?.name}</h3>
+                      <p className="text-sm text-[#777]">
+                        {new Date(c.createdAt).toLocaleDateString("en-US", {
+                          month: "long",
+                          day: "numeric",
+                          year: "numeric",
+                        })}
+                      </p>
+                    </div>
+                  </div>
+                  {editingCommentId === c._id ? (
+                    <>
+                      <textarea
+                        value={editedContent}
+                        onChange={(e) => setEditedContent(e.target.value)}
+                        className="w-full p-2 border border-[#ccc] bg-[#F6F5F5] rounded resize-none"
+                      />
+                      <div className="flex gap-2 mt-2">
+                        <button
+                          onClick={() => handleSaveEdit(c._id)}
+                          className="bg-[#303130] text-white px-3 py-1 rounded cursor-pointer"
+                        >
+                          Save
+                        </button>
+                        <button
+                          onClick={() => {
+                            setEditingCommentId(null);
+                            setEditedContent("");
+                          }}
+                          className="text-[#504E4F] px-3 py-1 border border-[#504E4F] rounded"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </>
+                  ) : (
+                    <p
+                      className="text-base text-[#201F1F]"
+                      style={{ fontFamily: "Inter, sans-serif " }}
+                    >
+                      {c.content}
+                    </p>
+                  )}
+
+                  <div className="flex items-center justify-center gap-4 text-sm text-[#504E4F]">
+                    <div className="flex items-center justify-center gap-2">
+                      <img
+                        src={
+                          c.likes.includes(user?._id)
+                            ? "/icons/liked.svg"
+                            : "/icons/likeIcon.svg"
+                        }
+                        alt="Like"
+                        className="w-6 h-6 cursor-pointer"
+                        onClick={() => handleToggleLike(c._id)}
+                      />
+                      <p>{c.likes.length}</p>
+                    </div>
+
+                    <div className="flex items-center justify-center gap-2">
+                      <img
+                        src={
+                          visibleReplies[c._id]
+                            ? "/icons/comment_open.svg"
+                            : "/icons/comment.svg"
+                        }
+                        alt="Arrow"
+                        className="w-6 h-6 cursor-pointer"
+                        onClick={() => toggleRepliesVisibility(c._id)}
+                      />
+                      <p>{c.replies?.length || 0}</p>
+                    </div>
+                    {/* <span>💬 {c.replies.length}</span> */}
+                    <p
+                      className="cursor-pointer underline text-[#201F1F] text-base"
+                      style={{
+                        fontFamily: "SometypeMono Regular, monospace",
+                      }}
+                      onClick={() =>
+                        setActiveReplyBoxId(
+                          activeReplyBoxId === c._id ? null : c._id
+                        )
+                      }
+                    >
+                      Reply
+                    </p>
+
+                    {(user?._id === c.userId?._id || user?.isAdmin) && (
+                      <div
+                        className="relative comment-options"
+                        style={{
+                          fontFamily: "SometypeMono Regular, monospace",
+                        }}
+                      >
+                        <img
+                          src="/icons/3dots.svg"
+                          alt="Options"
+                          className="w-5 h-5 cursor-pointer"
+                          onClick={() =>
+                            setMenuOpenId(menuOpenId === c._id ? null : c._id)
+                          }
+                        />
+                        {menuOpenId === c._id && (
+                          <div className="absolute top-6 left-0 bg-white border border-gray-300 rounded shadow-md z-10 w-24">
+                            {user?._id === c.userId?._id && (
+                              <p
+                                onClick={() => {
+                                  setEditingCommentId(c._id);
+                                  setEditedContent(c.content);
+                                  setMenuOpenId(null);
+                                }}
+                                className="px-4 py-2 text-sm text-gray-800 hover:bg-[#E7E6E6] hover:text-[#201F1F] transition-all cursor-pointer font-medium border border-[#504E4F]"
+                              >
+                                Edit
+                              </p>
+                            )}
+                            <p
+                              onClick={() => {
+                                handleDeleteComment(c._id);
+                                setMenuOpenId(null);
+                              }}
+                              className="px-4 py-2 text-sm text-[#464445] hover:bg-[#E7E6E6] hover:text-[#201F1F] transition-all cursor-pointer font-medium border border-[#504E4F]"
+                            >
+                              Delete
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                  {visibleReplies[c._id] && c.replies?.length > 0 && (
+                    <div
+                      className={`transition-opacity duration-500 ease-in-out ml-8 mt-4 flex flex-col gap-6
+                     ${
+                       visibleReplies[c._id]
+                         ? "opacity-100"
+                         : "opacity-0 pointer-events-none"
+                     }
+                   `}
+                    >
+                      {c.replies.map((reply) => (
+                        <div
+                          key={reply._id}
+                          className="flex flex-col gap-2 border-l-2 pl-4 border-gray-300 relative"
+                        >
+                          {/* User + Date */}
+                          <div className="flex items-center gap-2">
+                            <img
+                              src={
+                                reply.userId?.photoURL ||
+                                "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png"
+                              }
+                              alt="avatar"
+                              className="w-8 h-8 rounded-full"
+                            />
+                            <div>
+                              <h3 className="text-sm font-semibold">
+                                {reply.userId?.name}
+                              </h3>
+                              <p className="text-xs text-[#777]">
+                                {new Date(reply.createdAt).toLocaleDateString(
+                                  "en-US",
+                                  {
+                                    month: "short",
+                                    day: "numeric",
+                                    year: "numeric",
+                                  }
+                                )}
+                              </p>
+                            </div>
+                          </div>
+
+                          {/* Content or Edit Mode */}
+                          {editingCommentId === reply._id ? (
+                            <>
+                              <textarea
+                                value={editedContent}
+                                onChange={(e) =>
+                                  setEditedContent(e.target.value)
+                                }
+                                className="w-full p-2 border border-[#ccc] bg-[#F6F5F5] rounded resize-none"
+                              />
+                              <div className="flex gap-2 mt-1">
+                                <button
+                                  onClick={() => handleSaveEdit(reply._id)}
+                                  className="bg-[#303130] text-white px-3 py-1 rounded cursor-pointer"
+                                >
+                                  Save
+                                </button>
+                                <button
+                                  onClick={() => {
+                                    setEditingCommentId(null);
+                                    setEditedContent("");
+                                  }}
+                                  className="text-[#504E4F] px-3 py-1 border border-[#504E4F] rounded cursor-pointer"
+                                >
+                                  Cancel
+                                </button>
+                              </div>
+                            </>
+                          ) : (
+                            <p className="text-sm text-[#201F1F]">
+                              {reply.content}
+                            </p>
+                          )}
+
+                          {/* Like + 3-Dots Options */}
+                          <div className="flex items-center justify-between gap-3 text-sm text-[#504E4F] mt-1">
+                            <div className="flex items-center gap-1">
+                              <img
+                                src={
+                                  reply.likes.includes(user?._id)
+                                    ? "/icons/liked.svg"
+                                    : "/icons/likeIcon.svg"
+                                }
+                                alt="Like"
+                                className="w-5 h-5 cursor-pointer"
+                                onClick={() => handleToggleLike(reply._id)}
+                              />
+                              <p>{reply.likes.length}</p>
+                            </div>
+
+                            {(user?._id === reply.userId?._id ||
+                              user?.isAdmin) && (
+                              <div className="relative comment-options">
+                                <img
+                                  src="/icons/3dots.svg"
+                                  alt="Options"
+                                  className="w-5 h-5 cursor-pointer"
+                                  onClick={() =>
+                                    setMenuOpenId(
+                                      menuOpenId === reply._id
+                                        ? null
+                                        : reply._id
+                                    )
+                                  }
+                                />
+                                {menuOpenId === reply._id && (
+                                  <div className="absolute top-6 left-0 bg-white border border-gray-300 rounded shadow-md z-10 w-24">
+                                    {user?._id === reply.userId?._id && (
+                                      <p
+                                        onClick={() => {
+                                          setEditingCommentId(reply._id);
+                                          setEditedContent(reply.content);
+                                          setMenuOpenId(null);
+                                        }}
+                                        className="px-4 py-2 text-sm text-gray-800 hover:bg-[#E7E6E6] hover:text-[#201F1F] transition-all cursor-pointer font-medium border border-[#504E4F]"
+                                      >
+                                        Edit
+                                      </p>
+                                    )}
+                                    <p
+                                      onClick={() => {
+                                        handleDeleteComment(reply._id);
+                                        setMenuOpenId(null);
+                                      }}
+                                      className="px-4 py-2 text-sm text-[#464445] hover:bg-[#E7E6E6] hover:text-[#201F1F] transition-all cursor-pointer font-medium border border-[#504E4F]"
+                                    >
+                                      Delete
+                                    </p>
+                                  </div>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {activeReplyBoxId === c._id && (
+                    <div className="w-full flex flex-col gap-2 mt-4">
+                      <textarea
+                        rows={1}
+                        value={replyText}
+                        onChange={(e) => setReplyText(e.target.value)}
+                        placeholder="Write a reply..."
+                        className="w-full p-2 border border-[#ccc] bg-[#F6F5F5] rounded resize-none placeholder:text-[#B1AFB0] font-medium"
+                      />
+                      <button
+                        onClick={() => handleReplySubmit(c._id)}
+                        className="self-start bg-[#303130] text-white px-4 py-1 rounded hover:bg-[#201F1F] cursor-pointer"
+                      >
+                        Post Reply
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
       {showConfirmModal && (
@@ -263,6 +798,8 @@ const BlogDetail = () => {
           </div>
         </div>
       )}
+
+      <Footer />
     </div>
   );
 };
