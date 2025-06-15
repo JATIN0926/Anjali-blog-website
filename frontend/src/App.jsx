@@ -16,9 +16,6 @@ function App() {
   const showFallbackPopup = useSelector(
     (state) => state.authUi.showFallbackPopup
   );
-
-  const fullState = useSelector((state) => state);
-  console.log("Full Redux State:", fullState);
   return (
     <>
       <Toaster />

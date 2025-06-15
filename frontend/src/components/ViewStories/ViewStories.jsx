@@ -61,7 +61,6 @@ const ViewStories = () => {
     }
   };
 
-  console.log("pla", plans);
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -70,7 +69,6 @@ const ViewStories = () => {
             params: { type: activeTab },
           });
 
-          console.log("res", res.data);
           setPlans(res.data.data || []);
         } else {
           const res = await axios.get(`/api/blogs/status-type`, {

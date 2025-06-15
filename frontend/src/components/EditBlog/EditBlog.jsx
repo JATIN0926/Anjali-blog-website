@@ -182,13 +182,7 @@ const EditBlog = () => {
 
     try {
       toast.loading("Updating...");
-      console.log("Update Blog Data:", {
-        title,
-        content: updatedContent,
-        tags,
-        type,
-        thumbnail,
-      });
+
       const res = await axios.put(
         `/api/blogs/edit/${id}`,
         {
