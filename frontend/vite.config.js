@@ -1,13 +1,20 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
-// https://vite.dev/config/
+import dotenv from "dotenv";
+
+// Load .env file into process.env
+dotenv.config();
+
+// Log the environment variable to see if it's loaded
+console.log("✅ VITE_BACKEND_URL in config:", process.env.VITE_BACKEND_URL);
+
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   server: {
     proxy: {
       "/api": {
-        target: import.meta.env.VITE_BACKEND_URL,
+        target: process.env.VITE_BACKEND_URL, // ✅ use process.env here
         changeOrigin: true,
         secure: false,
       },
