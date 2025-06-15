@@ -9,8 +9,16 @@ import EditBlog from "./components/EditBlog/EditBlog";
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
 import SettingsPage from "./components/SettingsPage/SettingsPage";
 import ViewStories from "./components/ViewStories/ViewStories";
+import { useSelector } from "react-redux";
+import GoogleFallbackPopup from "./components/GoogleFallbackPopup/GoogleFallbackPopup";
 
 function App() {
+  const showFallbackPopup = useSelector(
+    (state) => state.authUi.showFallbackPopup
+  );
+
+  const fullState = useSelector((state) => state);
+  console.log("Full Redux State:", fullState);
   return (
     <>
       <Toaster />
@@ -53,6 +61,7 @@ function App() {
             />
           </Routes>
         </div>
+        {showFallbackPopup && <GoogleFallbackPopup />}
       </Router>
     </>
   );

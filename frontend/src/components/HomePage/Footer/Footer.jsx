@@ -4,6 +4,7 @@ import axios from "axios";
 import { logoutUser, setUser } from "../../../redux/slices/userSlice";
 import { loginWithGoogle } from "../../../utils/loginWithGoogle";
 import toast from "react-hot-toast";
+import { setShowFallbackPopup } from "../../../redux/slices/authUiSlice";
 
 const Footer = () => {
   const user = useSelector((state) => state.user.currentUser);
@@ -22,17 +23,18 @@ const Footer = () => {
         console.error("Logout failed", err);
       }
     } else {
-      const loginToast = toast.loading("Signing you in...");
+      dispatch(setShowFallbackPopup(true));
+      // const loginToast = toast.loading("Signing you in...");
       try {
         const userData = await loginWithGoogle();
         if (userData) {
           dispatch(setUser(userData));
-          toast.success("Signed in successfully!", { id: loginToast });
+          toast.success("Signed in successfully!");
         } else {
-          toast.error("Login failed. Please try again.", { id: loginToast });
+          toast.error("Login failed. Please try again.");
         }
       } catch (err) {
-        toast.error("Login failed. Please try again.", { id: loginToast });
+        toast.error("Login failed. Please try again.");
         console.error("Login failed", err);
       }
     }

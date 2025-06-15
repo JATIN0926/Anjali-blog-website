@@ -3,6 +3,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "../../redux/slices/userSlice";
+import { setShowFallbackPopup } from "../../redux/slices/authUiSlice";
 
 const GoogleOneTapLogin = () => {
   const dispatch = useDispatch();
@@ -33,9 +34,22 @@ const GoogleOneTapLogin = () => {
         cancel_on_tap_outside: false,
       });
 
-      google.accounts.id.prompt();
+      google.accounts.id.prompt((notification) => {
+        // Detect if One Tap was dismissed or blocked
+        if (
+          notification.isNotDisplayed() ||
+          notification.isSkippedMoment() ||
+          notification.getDismissedReason() === "credential_returned"
+        ) {
+          console.warn(
+            "Google One Tap dismissed or blocked",
+            notification.getDismissedReason()
+          );
+          dispatch(setShowFallbackPopup(true));
+        }
+      });
     }
-  }, [dispatch]);
+  }, [dispatch, user]);
 
   return null;
 };

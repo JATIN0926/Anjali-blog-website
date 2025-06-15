@@ -2,10 +2,12 @@ import React, { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Loader from "../Loader/Loader";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import "../CreateBlog/style.css";
 import toast from "react-hot-toast";
 import Footer from "../HomePage/Footer/Footer";
+import { setUser } from "../../redux/slices/userSlice";
+import { loginWithGoogle } from "../../utils/loginWithGoogle";
 const BlogDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -23,6 +25,7 @@ const BlogDetail = () => {
   const user = useSelector((state) => state.user.currentUser);
   const hasLiked = user && blog?.likes.includes(user._id);
   const commentSectionRef = useRef(null);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const fetchBlog = async () => {
@@ -154,6 +157,20 @@ const BlogDetail = () => {
   };
 
   const handleToggleLike = async (commentId) => {
+    if (!user) {
+      toast("Sign in to like a comment 🔒", { icon: "🔒" });
+
+      try {
+        const signedInUser = await loginWithGoogle(dispatch);
+        dispatch(setUser(signedInUser));
+        toast.success(`Welcome, ${signedInUser.name}!`);
+      } catch (err) {
+        console.error("Google Sign-In failed", err);
+        toast.error("Sign-in failed. Please try again.");
+      }
+
+      return;
+    }
     try {
       const res = await axios.put(
         `/api/comments/toggle-like/${commentId}`,
@@ -230,6 +247,22 @@ const BlogDetail = () => {
   };
 
   const handleToggleBlogLike = async () => {
+    if (!user) {
+      toast("Please sign in to perform this action 🔒", {
+        icon: "🔒",
+      });
+
+      try {
+        const signedInUser = await loginWithGoogle(dispatch);
+        dispatch(setUser(signedInUser));
+        toast.success(`Welcome, ${signedInUser.name}!`);
+      } catch (err) {
+        console.error("Google Sign-In failed", err);
+        toast.error("Google Sign-In failed");
+      }
+
+      return;
+    }
     try {
       const res = await axios.put(
         `/api/blogs/toggle-like/${blog._id}`,
@@ -252,6 +285,19 @@ const BlogDetail = () => {
       behavior: "smooth",
       block: "start",
     });
+  };
+
+  const handleGuestSignIn = async () => {
+    toast("Sign in to add a comment 🔒", { icon: "🔒" });
+
+    try {
+      const signedInUser = await loginWithGoogle(dispatch);
+      dispatch(setUser(signedInUser));
+      toast.success(`Welcome, ${signedInUser.name}!`);
+    } catch (err) {
+      console.error("Google Sign-In failed", err);
+      toast.error("Sign-in failed. Please try again.");
+    }
   };
 
   if (loading) return <Loader />;
@@ -323,7 +369,10 @@ const BlogDetail = () => {
         </div>
         <div className="w-full flex items-center justify-between border-y border-y-[#E7EAEE]">
           <div className=" py-2 flex items-center justify-center gap-5">
-            <div className="flex items-center justify-center gap-2">
+            <div
+              className="flex items-center justify-center gap-2"
+              onClick={handleToggleBlogLike}
+            >
               <img
                 src={hasLiked ? "/icons/liked.svg" : "/icons/likeIcon.svg"}
                 alt="Arrow"
@@ -451,7 +500,7 @@ const BlogDetail = () => {
             Comments
           </h2>
           {/* Comment input box */}
-          {user && (
+          {user ? (
             <div className="flex flex-col items-start justify-center gap-4 w-full border-b border-b-[#E7E6E6] py-8">
               <div className="flex items-center justify-center gap-2">
                 <img
@@ -490,13 +539,36 @@ const BlogDetail = () => {
                 Add Comment
               </button>
             </div>
+          ) : (
+            <div className="w-full py-6 px-5 bg-[#F6F5F5] rounded flex items-center justify-between border border-[#E2E2E2] shadow-sm">
+              <div className="flex items-center gap-4">
+                {/* <img src="/icons/lock.svg" alt="lock" className="w-5 h-5" /> */}
+                <p
+                  className="text-[#504E4F] font-medium"
+                  style={{ fontFamily: "Inter, sans-serif" }}
+                >
+                  Please sign in to add a comment.
+                </p>
+              </div>
+              <button
+                onClick={handleGuestSignIn}
+                className="bg-[#303130] text-white px-4 py-1 rounded hover:bg-[#201F1F] transition duration-200 ease-in-out cursor-pointer"
+              >
+                Sign In
+              </button>
+            </div>
           )}
 
           {/* Comment list */}
           {comments.length === 0 ? (
-            <p className="text-gray-500 mt-8 text-center flex justify-self-center">
-              No comments yet.
-            </p>
+            <div className="flex justify-center items-center mt-8 w-full">
+              <p
+                className="text-gray-500 text-center text-2xl"
+                style={{ fontFamily: "Inter, sans-serif " }}
+              >
+                No comments yet.
+              </p>
+            </div>
           ) : (
             <div className="mt-8 flex flex-col gap-10 w-full">
               {comments.map((c) => (
@@ -506,12 +578,15 @@ const BlogDetail = () => {
                 >
                   <div className="flex items-center justify-center gap-2">
                     <img
-                      src={user?.photoURL}
+                      src={c.userId?.photoURL}
                       alt="avatar"
                       className="w-10 h-10 rounded-full"
                     />
                     <div className="flex flex-col items-start justify-center">
-                      <h3 className="text-lg font-semibold"> {user?.name}</h3>
+                      <h3 className="text-lg font-semibold">
+                        {" "}
+                        {c.userId?.name}
+                      </h3>
                       <p className="text-sm text-[#777]">
                         {new Date(c.createdAt).toLocaleDateString("en-US", {
                           month: "long",

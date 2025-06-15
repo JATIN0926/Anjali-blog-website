@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const loginWithGoogle = () => {
+export const loginWithGoogle = (dispatch) => {
   return new Promise((resolve, reject) => {
     /* global google */
     if (!window.google) return reject("Google API not loaded");
@@ -12,14 +12,25 @@ export const loginWithGoogle = () => {
           const res = await axios.post("/api/users/google-onetap", {
             credential: response.credential,
           });
-          resolve(res.data.data.user); // returns the user object
+          resolve(res.data.data.user);
         } catch (err) {
-          reject(err);
+          reject(err); // on fail
         }
       },
       cancel_on_tap_outside: false,
     });
 
-    google.accounts.id.prompt(); // triggers the login popup
+    google.accounts.id.prompt((notification) => {
+      if (
+        notification.isNotDisplayed() ||
+        notification.isSkippedMoment() ||
+        notification.getDismissedReason() === "credential_returned"
+      ) {
+        console.warn("Google One Tap dismissed/skipped");
+        if (dispatch) {
+          dispatch({ type: "authUi/setShowFallbackPopup", payload: true });
+        }
+      }
+    });
   });
 };

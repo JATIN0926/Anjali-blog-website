@@ -10,14 +10,11 @@ export const createBlog = async (req, res) => {
   try {
     const { title, content, tags, type, uid, thumbnail, status } = req.body;
 
-    console.log("inside");
     if (!title || !content || !uid) {
-      console.log("inside2");
       return res.status(400).json(new ApiError(400, "Missing required fields"));
     }
     
     if (status && !["Draft", "Published"].includes(status)) {
-      console.log("inside3");
       return res.status(400).json(new ApiError(400, "Invalid blog status"));
     }
 

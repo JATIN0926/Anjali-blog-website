@@ -3,6 +3,9 @@ import User from "../models/user.model.js";
 import jwt from "jsonwebtoken";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
+import admin from "firebase-admin";
+import dotenv from "dotenv";
+dotenv.config();
 
 const client = new OAuth2Client(process.env.FIREBASE_CLIENT_ID);
 
@@ -49,6 +52,41 @@ export const loginWithOneTap = async (req, res) => {
     );
   } catch (error) {
     console.error("Google One Tap login failed", error);
+    return res.status(500).json(new ApiError(500, "Login failed"));
+  }
+};
+
+export const loginWithFirebase = async (req, res) => {
+  const { displayName, email, photoURL, uid } = req.body;
+
+  try {
+    let user = await User.findOne({ $or: [{ uid }, { email }] });
+    if (!user) {
+      user = await User.create({ name: displayName, email, photoURL, uid });
+    }
+
+    const jwtToken = jwt.sign(
+      { id: user._id, uid: user.uid },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
+    );
+
+    res.cookie("token", jwtToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+    });
+
+    const { createdAt, updatedAt, __v, ...safeUser } = user.toObject();
+
+    return res.status(200).json(
+      new ApiResponse(200, {
+        message: "Signed in via Firebase Auth",
+        user: safeUser,
+      })
+    );
+  } catch (error) {
+    console.error("Firebase login failed", error);
     return res.status(500).json(new ApiError(500, "Login failed"));
   }
 };
