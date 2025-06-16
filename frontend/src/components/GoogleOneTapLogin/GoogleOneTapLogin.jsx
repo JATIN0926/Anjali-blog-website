@@ -1,9 +1,9 @@
 import { useEffect } from "react";
-import axios from "axios";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "../../redux/slices/userSlice";
 import { setShowFallbackPopup } from "../../redux/slices/authUiSlice";
+import axiosInstance from "../../utils/axiosInstance";
 
 const GoogleOneTapLogin = () => {
   const dispatch = useDispatch();
@@ -17,7 +17,7 @@ const GoogleOneTapLogin = () => {
         callback: async (response) => {
           const loginToast = toast.loading("Signing you in...");
           try {
-            const res = await axios.post("/api/users/google-onetap", {
+            const res = await axiosInstance.post("/api/users/google-onetap", {
               credential: response.credential,
             });
 

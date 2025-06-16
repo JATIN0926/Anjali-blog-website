@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Loader from "../Loader/Loader";
 import axios from "axios";
+import axiosInstance from "../../utils/axiosInstance";
 
 const HomePage = () => {
   const [blogs, setBlogs] = useState([]);
@@ -21,7 +22,7 @@ const HomePage = () => {
       setLoading(true);
       try {
         const type = activeTab === "social" ? "Article" : "Diary";
-        const res = await axios.get(`/api/blogs/type/${type}`);
+        const res = await axiosInstance.get(`/api/blogs/type/${type}`);
 
         setBlogs(res.data.data);
       } catch (err) {
@@ -33,7 +34,7 @@ const HomePage = () => {
     };
 
     fetchBlogs();
-  }, [activeTab]); // Re-run when tab changes
+  }, [activeTab]); 
 
   return (
     <>
