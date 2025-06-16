@@ -35,17 +35,16 @@ const GoogleOneTapLogin = () => {
       });
 
       google.accounts.id.prompt((notification) => {
-        // Detect if One Tap was dismissed or blocked
-        if (
-          notification.isNotDisplayed() ||
-          notification.isSkippedMoment() ||
-          notification.getDismissedReason() === "credential_returned"
-        ) {
-          console.warn(
-            "Google One Tap dismissed or blocked",
-            notification.getDismissedReason()
-          );
+        const dismissedReason = notification.getDismissedReason?.();
+
+        if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+          console.warn("Google One Tap dismissed or skipped:", dismissedReason);
           dispatch(setShowFallbackPopup(true));
+        }
+
+        // 🛑 Do NOT dispatch fallback popup if credential was returned
+        if (dismissedReason === "credential_returned") {
+          console.log("Credential returned successfully, no fallback needed");
         }
       });
     }
