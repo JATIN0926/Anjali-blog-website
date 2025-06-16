@@ -22,6 +22,7 @@ const GoogleOneTapLogin = () => {
             });
 
             dispatch(setUser(res.data.data.user));
+            dispatch(setShowFallbackPopup(false));
 
             toast.success("Signed in successfully!", { id: loginToast });
 
