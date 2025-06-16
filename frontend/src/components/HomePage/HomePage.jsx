@@ -5,7 +5,6 @@ import GoogleOneTapLogin from "../GoogleOneTapLogin/GoogleOneTapLogin";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Loader from "../Loader/Loader";
-import axios from "axios";
 import axiosInstance from "../../utils/axiosInstance";
 
 const HomePage = () => {

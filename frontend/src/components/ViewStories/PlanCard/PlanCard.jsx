@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
+import axiosInstance from "../../../utils/axiosInstance";
 
 const PlanCard = ({ title, id, onEditSuccess, isEditing, onStartEdit, onCancelEdit, onSaveEdit }) => {
   const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -10,7 +11,7 @@ const PlanCard = ({ title, id, onEditSuccess, isEditing, onStartEdit, onCancelEd
     setShowConfirmModal(false);
     const toastId = toast.loading("Deleting plan...");
     try {
-      await axios.delete(`/api/plans/${id}`);
+      await axiosInstance.delete(`/api/plans/${id}`);
       toast.success("Plan deleted successfully", { id: toastId });
       onEditSuccess?.("delete", id);
     } catch (error) {

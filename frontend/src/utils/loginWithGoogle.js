@@ -1,4 +1,4 @@
-import axios from "axios";
+import axiosInstance from "./axiosInstance";
 
 export const loginWithGoogle = (dispatch) => {
   return new Promise((resolve, reject) => {
@@ -9,7 +9,7 @@ export const loginWithGoogle = (dispatch) => {
       client_id: import.meta.env.VITE_FIREBASE_CLIENT_ID,
       callback: async (response) => {
         try {
-          const res = await axios.post("/api/users/google-onetap", {
+          const res = await axiosInstance.post("/api/users/google-onetap", {
             credential: response.credential,
           });
           resolve(res.data.data.user);

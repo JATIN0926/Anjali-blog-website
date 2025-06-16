@@ -1,10 +1,10 @@
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
-import axios from "axios";
 import { logoutUser, setUser } from "../../../redux/slices/userSlice";
 import { loginWithGoogle } from "../../../utils/loginWithGoogle";
 import toast from "react-hot-toast";
 import { setShowFallbackPopup } from "../../../redux/slices/authUiSlice";
+import axiosInstance from "../../../utils/axiosInstance";
 
 const Footer = () => {
   const user = useSelector((state) => state.user.currentUser);
@@ -15,7 +15,7 @@ const Footer = () => {
       // User is signed in, so sign out
       const logoutToast = toast.loading("Signing you out...");
       try {
-        await axios.post("/api/users/logout", {}, { withCredentials: true });
+        await axiosInstance.post("/api/users/logout", {}, { withCredentials: true });
         dispatch(logoutUser());
         toast.success("Signed out successfully!", { id: logoutToast });
       } catch (err) {

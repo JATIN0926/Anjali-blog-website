@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import ViewCard from "./ViewCard/ViewCard";
-import axios from "axios";
 import toast from "react-hot-toast";
 import "./ViewStories.css";
 import PlanCard from "./PlanCard/PlanCard";
+import axiosInstance from "../../utils/axiosInstance";
 const ViewStories = () => {
   const [activeTab, setActiveTab] = useState("Diary");
   const [blogStatus, setBlogStatus] = useState("Published");
@@ -19,7 +19,7 @@ const ViewStories = () => {
 
     const toastId = toast.loading("Adding plan...");
     try {
-      const res = await axios.post("/api/plans/create", {
+      const res = await axiosInstance.post("/api/plans/create", {
         title: newPlanTitle,
         type: activeTab,
       });
@@ -45,7 +45,7 @@ const ViewStories = () => {
 
     const toastId = toast.loading("Updating plan...");
     try {
-      const res = await axios.put(`/api/plans/${editingPlanId}`, {
+      const res = await axiosInstance.put(`/api/plans/${editingPlanId}`, {
         title: newPlanTitle,
       });
       setPlans((prev) =>
@@ -65,13 +65,13 @@ const ViewStories = () => {
     const fetchData = async () => {
       try {
         if (blogStatus === "Plan to Publish") {
-          const res = await axios.get(`/api/plans/all`, {
+          const res = await axiosInstance.get(`/api/plans/all`, {
             params: { type: activeTab },
           });
 
           setPlans(res.data.data || []);
         } else {
-          const res = await axios.get(`/api/blogs/status-type`, {
+          const res = await axiosInstance.get(`/api/blogs/status-type`, {
             params: {
               status: blogStatus,
               type: activeTab,
@@ -199,7 +199,7 @@ const ViewStories = () => {
                       if (!updatedTitle.trim()) return;
                       const toastId = toast.loading("Updating plan...");
                       try {
-                        const res = await axios.put(`/api/plans/${id}`, {
+                        const res = await axiosInstance.put(`/api/plans/${id}`, {
                           title: updatedTitle,
                         });
                         setPlans((prev) =>

@@ -6,7 +6,6 @@ import BulletList from "@tiptap/extension-bullet-list";
 import ListItem from "@tiptap/extension-list-item";
 import CustomParagraph from "./CustomParagraph.js";
 import toast from "react-hot-toast";
-import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import {
   setTitle,
@@ -16,6 +15,7 @@ import {
   setThumbnail,
 } from "../../redux/slices/blogDraftSlice.js";
 import "./style.css";
+import axiosInstance from "../../utils/axiosInstance.js";
 
 const CreateBlog = () => {
   const fileInputRef = useRef();
@@ -129,7 +129,7 @@ const CreateBlog = () => {
     formData.append("upload_preset", "blog_preset");
 
     try {
-      const response = await axios.post(
+      const response = await axiosInstance.post(
         `https://api.cloudinary.com/v1_1/${
           import.meta.env.VITE_CLOUDINARY_CLOUD_NAME
         }/upload`,
@@ -181,7 +181,7 @@ const CreateBlog = () => {
     formData.append("upload_preset", "blog_preset");
 
     try {
-      const response = await axios.post(
+      const response = await axiosInstance.post(
         `https://api.cloudinary.com/v1_1/${
           import.meta.env.VITE_CLOUDINARY_CLOUD_NAME
         }/upload`,
@@ -243,7 +243,7 @@ const CreateBlog = () => {
         status === "Published" ? "Posting your blog..." : "Saving draft..."
       );
 
-      const response = await axios.post(
+      const response = await axiosInstance.post(
         `/api/blogs/create`,
         {
           title,

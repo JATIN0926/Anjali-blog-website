@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
+import axiosInstance from "../../../utils/axiosInstance";
 
 const ViewCard = ({ title, date, id }) => {
   const navigate = useNavigate();
@@ -11,7 +12,7 @@ const ViewCard = ({ title, date, id }) => {
     setShowConfirmModal(false);
     const toastId = toast.loading("Deleting blog...");
     try {
-      await axios.delete(`/api/blogs/delete/${id}`);
+      await axiosInstance.delete(`/api/blogs/delete/${id}`);
       toast.success("Blog deleted successfully", { id: toastId });
       // Refresh or update UI
       window.location.reload(); // or lift state to parent and re-fetch

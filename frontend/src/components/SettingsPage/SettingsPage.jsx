@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import axios from "axios";
 import toast from "react-hot-toast";
 import { setUser } from "../../redux/slices/userSlice";
+import axiosInstance from "../../utils/axiosInstance";
 
 const SettingsPage = () => {
   const user = useSelector((state) => state.user.currentUser);
@@ -24,7 +24,7 @@ const SettingsPage = () => {
 
     try {
       const toastId = toast.loading("Updating...");
-      const res = await axios.patch(
+      const res = await axiosInstance.patch(
         "/api/users/socials",
         { [field]: inputValues[field] },
         { withCredentials: true }

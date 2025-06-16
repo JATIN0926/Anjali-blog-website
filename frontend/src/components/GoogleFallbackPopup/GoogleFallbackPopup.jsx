@@ -3,11 +3,11 @@ import { useDispatch } from "react-redux";
 import { useNavigate, useLocation } from "react-router-dom";
 import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import toast from "react-hot-toast";
-import axios from "axios";
 
 import { setUser } from "../../redux/slices/userSlice";
 import { setShowFallbackPopup } from "../../redux/slices/authUiSlice";
 import { app } from "../../../firebase";
+import axiosInstance from "../../utils/axiosInstance";
 
 const GoogleFallbackPopup = () => {
   const dispatch = useDispatch();
@@ -23,7 +23,7 @@ const GoogleFallbackPopup = () => {
 
       const { displayName, email, photoURL, uid } = result.user;
 
-      const res = await axios.post(
+      const res = await axiosInstance.post(
         "/api/users/google-popup",
         {
           displayName,

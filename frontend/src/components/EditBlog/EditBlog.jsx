@@ -7,9 +7,9 @@ import BulletList from "@tiptap/extension-bullet-list";
 import ListItem from "@tiptap/extension-list-item";
 import CustomParagraph from "../CreateBlog/CustomParagraph";
 import toast from "react-hot-toast";
-import axios from "axios";
 import "../CreateBlog/style.css";
 import Loader from "../Loader/Loader";
+import axiosInstance from "../../utils/axiosInstance";
 
 const EditBlog = () => {
   const { id } = useParams();
@@ -43,7 +43,7 @@ const EditBlog = () => {
   useEffect(() => {
     const fetchBlog = async () => {
       try {
-        const res = await axios.get(`/api/blogs/${id}`);
+        const res = await axiosInstance.get(`/api/blogs/${id}`);
         const { title, content, tags, type, thumbnail } = res.data.data;
 
         setTitle(title);
@@ -94,7 +94,7 @@ const EditBlog = () => {
     formData.append("upload_preset", "blog_preset");
 
     try {
-      const res = await axios.post(
+      const res = await axiosInstance.post(
         `https://api.cloudinary.com/v1_1/${
           import.meta.env.VITE_CLOUDINARY_CLOUD_NAME
         }/upload`,
@@ -127,7 +127,7 @@ const EditBlog = () => {
     formData.append("upload_preset", "blog_preset");
 
     try {
-      const res = await axios.post(
+      const res = await axiosInstance.post(
         `https://api.cloudinary.com/v1_1/${
           import.meta.env.VITE_CLOUDINARY_CLOUD_NAME
         }/upload`,
@@ -183,7 +183,7 @@ const EditBlog = () => {
     try {
       toast.loading("Updating...");
 
-      const res = await axios.put(
+      const res = await axiosInstance.put(
         `/api/blogs/edit/${id}`,
         {
           title,

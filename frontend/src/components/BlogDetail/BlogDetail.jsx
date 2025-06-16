@@ -8,6 +8,7 @@ import toast from "react-hot-toast";
 import Footer from "../HomePage/Footer/Footer";
 import { setUser } from "../../redux/slices/userSlice";
 import { loginWithGoogle } from "../../utils/loginWithGoogle";
+import axiosInstance from "../../utils/axiosInstance";
 const BlogDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -30,7 +31,7 @@ const BlogDetail = () => {
   useEffect(() => {
     const fetchBlog = async () => {
       try {
-        const res = await axios.get(`/api/blogs/${id}`);
+        const res = await axiosInstance.get(`/api/blogs/${id}`);
         setBlog(res.data.data);
       } catch (error) {
         console.error("Failed to load blog:", error);
@@ -41,7 +42,7 @@ const BlogDetail = () => {
 
     const fetchComments = async () => {
       try {
-        const res = await axios.get(`/api/comments/${id}`);
+        const res = await axiosInstance.get(`/api/comments/${id}`);
         setComments(res.data.data);
       } catch (err) {
         console.error("Error fetching comments:", err);
@@ -66,7 +67,7 @@ const BlogDetail = () => {
     setShowConfirmModal(false); // Hide modal first
     const toastId = toast.loading("Deleting blog...");
     try {
-      await axios.delete(`/api/blogs/delete/${id}`);
+      await axiosInstance.delete(`/api/blogs/delete/${id}`);
       toast.success("Blog deleted successfully", { id: toastId });
       navigate("/");
     } catch (err) {
@@ -79,7 +80,7 @@ const BlogDetail = () => {
     if (!commentText.trim()) return toast.error("Please write a comment");
 
     try {
-      const res = await axios.post(
+      const res = await axiosInstance.post(
         `/api/comments/create`,
         {
           blogId: id,
@@ -102,7 +103,7 @@ const BlogDetail = () => {
   const handleSaveEdit = async (commentId) => {
     if (!editedContent.trim()) return toast.error("Comment cannot be empty");
     try {
-      await axios.put(
+      await axiosInstance.put(
         `/api/comments/edit/${commentId}`,
         { content: editedContent },
         { withCredentials: true }
@@ -137,7 +138,7 @@ const BlogDetail = () => {
 
   const handleDeleteComment = async (commentId) => {
     try {
-      await axios.delete(`/api/comments/delete/${commentId}`, {
+      await axiosInstance.delete(`/api/comments/delete/${commentId}`, {
         withCredentials: true,
       });
       setComments((prev) =>
@@ -172,7 +173,7 @@ const BlogDetail = () => {
       return;
     }
     try {
-      const res = await axios.put(
+      const res = await axiosInstance.put(
         `/api/comments/toggle-like/${commentId}`,
         {},
         {
@@ -208,7 +209,7 @@ const BlogDetail = () => {
     if (!replyText.trim()) return toast.error("Reply cannot be empty");
 
     try {
-      const res = await axios.post(
+      const res = await axiosInstance.post(
         "/api/comments/reply",
         {
           blogId: id,
@@ -264,7 +265,7 @@ const BlogDetail = () => {
       return;
     }
     try {
-      const res = await axios.put(
+      const res = await axiosInstance.put(
         `/api/blogs/toggle-like/${blog._id}`,
         {},
         { withCredentials: true }
