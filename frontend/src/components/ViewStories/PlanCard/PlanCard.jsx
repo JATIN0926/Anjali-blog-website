@@ -1,7 +1,7 @@
 import { useState } from "react";
-import axios from "axios";
 import toast from "react-hot-toast";
 import axiosInstance from "../../../utils/axiosInstance";
+import "../../BlogDetail/BlogDetail.css"
 
 const PlanCard = ({ title, id, onEditSuccess, isEditing, onStartEdit, onCancelEdit, onSaveEdit }) => {
   const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -45,31 +45,30 @@ const PlanCard = ({ title, id, onEditSuccess, isEditing, onStartEdit, onCancelEd
             </button>
           </div>
         ) : (
-          <>
+          <div className="w-full flex items-center justify-between">
             <h1
-              className="text-[2.1rem] tracking-[-0.84px] font-medium"
+              className="text-[2.1rem] tracking-[-0.84px] font-medium w-[65%]"
               style={{ fontFamily: "ScheherazadeNew Regular, monospace" }}
             >
               {title}
             </h1>
-            <div className="w-full flex items-center justify-between">
-              <div></div>
+            <div className="w-[30%] flex items-center justify-end">
               <div className="flex items-center justify-center gap-5">
                 <img
                   src="/icons/edit.svg"
                   alt="Edit"
-                  className="w-6 h-6 cursor-pointer"
+                  className="w-6 h-6 cursor-pointer edit"
                   onClick={() => onStartEdit(id)}
                 />
                 <img
                   src="/icons/delete.svg"
                   alt="Delete"
-                  className="w-6 h-6 cursor-pointer"
+                  className="w-6 h-6 cursor-pointer delete"
                   onClick={() => setShowConfirmModal(true)}
                 />
               </div>
             </div>
-          </>
+          </div>
         )}
       </div>
 

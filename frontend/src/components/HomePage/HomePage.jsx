@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Loader from "../Loader/Loader";
 import axiosInstance from "../../utils/axiosInstance";
+import "./Homepage.css";
 
 const HomePage = () => {
   const [blogs, setBlogs] = useState([]);
@@ -33,7 +34,7 @@ const HomePage = () => {
     };
 
     fetchBlogs();
-  }, [activeTab]); 
+  }, [activeTab]);
 
   return (
     <>
@@ -76,18 +77,18 @@ const HomePage = () => {
                 style={{ fontFamily: "SometypeMono Regular, monospace" }}
               >
                 <button
-                  className="underline text-[1.1rem] hover:font-semibold transition-all cursor-pointer"
+                  className="underline text-[1.1rem] button-article transition-all cursor-pointer"
                   onClick={() => navigate("/create-blog")}
                 >
                   Write article
                 </button>
                 <button
-                  className="underline text-[1.1rem] hover:font-semibold transition-all cursor-pointer"
+                  className="underline text-[1.1rem] button-story transition-all cursor-pointer"
                   onClick={() => navigate("/view-stories")}
                 >
                   View stories
                 </button>
-                <div className="w-[2vw] h-auto cursor-pointer">
+                <div className="w-[2vw] h-auto cursor-pointer settings-icon-wrapper">
                   <img
                     src="/icons/settings.png"
                     alt=""
@@ -99,11 +100,11 @@ const HomePage = () => {
             )}
           </div>
         </div>
-        <div className="w-full flex items-end justify-end gap-6 mt-10">
-          <div className="w-[52%] flex flex-col gap-12">
-            <div className="w-full flex flex-col gap-4">
+        <div className="w-full flex items-end justify-end gap-6">
+          <div className="w-[48%] flex flex-col gap-12">
+            <div className="w-full flex flex-col">
               <h1
-                className="text-[2rem] leading-7 mb-10"
+                className="text-[2rem] leading-7 mb-5"
                 style={{ fontFamily: "ScheherazadeNew Regular, monospace" }}
               >
                 {activeTab === "social"
@@ -111,12 +112,12 @@ const HomePage = () => {
                   : "Here, you will find these are moments I kept. Messy, unsure, and mine"}
               </h1>
               <div
-                className="w-full flex items-center justify-center relative"
+                className="w-full flex items-center justify-center relative mb-2"
                 style={{ fontFamily: "SometypeMono Regular, monospace" }}
               >
                 {/* Sliding background */}
                 <div
-                  className="absolute h-full w-1/2 bg-[#3D3C3C] transition-transform duration-300 ease-in-out"
+                  className="absolute h-full w-1/2 justify-self-center bg-[#3D3C3C] transition-transform duration-300 ease-in-out"
                   style={{
                     transform:
                       activeTab === "diary"

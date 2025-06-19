@@ -12,3 +12,23 @@
     background-color: #555;
   }
   
+  .button-article{
+    transition: all 0.5s ease;
+  }
+  .button-article:hover {
+    font-weight: 700;
+  }
+  .button-story{
+    transition: all 0.5s ease;
+  }
+  .button-story:hover {
+    font-weight: 700;
+  }
+  .settings-icon-wrapper {
+    transition: opacity 0.2s ease;
+  }
+  
+  .settings-icon-wrapper:hover {
+    opacity: 0.5;
+  }
+  

@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 const BlogCard = ({ date, heading, imgSrc , id }) => {
   const navigate = useNavigate();
   return (
-    <div className="w-full border-t-[1px] border-t-[#303130] p-4 flex items-center justify-between gap-6">
+    <div className="w-full border-t border-t-[#303130] p-4 flex items-center justify-between gap-6">
       {/* Left content */}
       <div className="flex flex-col items-start justify-center gap-2 w-[65%]">
         <p

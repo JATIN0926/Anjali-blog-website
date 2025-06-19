@@ -1,9 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import toast from "react-hot-toast";
 import axiosInstance from "../../../utils/axiosInstance";
-
+import "../../BlogDetail/BlogDetail.css"
 const ViewCard = ({ title, date, id }) => {
   const navigate = useNavigate();
   const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -14,8 +13,8 @@ const ViewCard = ({ title, date, id }) => {
     try {
       await axiosInstance.delete(`/api/blogs/delete/${id}`);
       toast.success("Blog deleted successfully", { id: toastId });
-      // Refresh or update UI
-      window.location.reload(); // or lift state to parent and re-fetch
+ 
+      window.location.reload();
     } catch (error) {
       toast.error("Failed to delete blog", { id: toastId });
       console.error("Delete error:", error);
@@ -42,14 +41,14 @@ const ViewCard = ({ title, date, id }) => {
             <img
               src="/icons/edit.svg"
               alt="Edit"
-              className="w-6 h-6 cursor-pointer"
+              className="w-6 h-6 cursor-pointer edit"
               onClick={() => navigate(`/edit/${id}`)}
             />
-            <img src="/icons/share.svg" alt="Share" className="w-6 h-6" />
+            <img src="/icons/share.svg" alt="Share" className="w-6 h-6 cursor-pointer share" />
             <img
               src="/icons/delete.svg"
               alt="Delete"
-              className="w-6 h-6 cursor-pointer"
+              className="w-6 h-6 cursor-pointer delete"
               onClick={() => setShowConfirmModal(true)}
             />
           </div>

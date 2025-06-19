@@ -86,8 +86,8 @@ const Footer = () => {
       </div>
 
       {/* Image Section */}
-      <div className="w-[30%] flex gap-4">
-        <div className="flex flex-col items-center justify-center gap-8">
+      <div className="w-[30%] flex gap-4 h-[10.5rem]">
+        <div className=" h-full flex flex-col items-center justify-between">
           <div className="flex flex-col gap-1">
             <a
               href={user?.twitter}
@@ -137,7 +137,7 @@ const Footer = () => {
             </button>
           )}
         </div>
-        <div className="w-[70%] self-start">
+        <div className="w-[70%] h-full self-start">
           <img
             src="/images/footer_img.png"
             alt=""

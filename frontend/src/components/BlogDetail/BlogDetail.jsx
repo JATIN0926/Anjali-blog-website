@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
 import Loader from "../Loader/Loader";
 import { useDispatch, useSelector } from "react-redux";
 import "../CreateBlog/style.css";
@@ -9,6 +8,7 @@ import Footer from "../HomePage/Footer/Footer";
 import { setUser } from "../../redux/slices/userSlice";
 import { loginWithGoogle } from "../../utils/loginWithGoogle";
 import axiosInstance from "../../utils/axiosInstance";
+import "./BlogDetail.css"
 const BlogDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -399,13 +399,13 @@ const BlogDetail = () => {
                 <img
                   src="/icons/edit.svg"
                   alt="Arrow"
-                  className="w-6 h-6 cursor-pointer"
+                  className="w-6 h-6 cursor-pointer edit"
                   onClick={() => navigate(`/edit/${id}`)}
                 />
                 <img
                   src="/icons/delete.svg"
                   alt="Arrow"
-                  className="w-6 h-6 cursor-pointer"
+                  className="w-6 h-6 cursor-pointer delete"
                   onClick={() => setShowConfirmModal(true)}
                 />
               </>
@@ -413,7 +413,7 @@ const BlogDetail = () => {
             <img
               src="/icons/share.svg"
               alt="Arrow"
-              className="w-6 h-6 cursor-pointer"
+              className="w-6 h-6 cursor-pointer share"
             />
           </div>
         </div>
@@ -471,13 +471,13 @@ const BlogDetail = () => {
                 <img
                   src="/icons/edit.svg"
                   alt="Arrow"
-                  className="w-6 h-6 cursor-pointer"
+                  className="w-6 h-6 cursor-pointer edit"
                   onClick={() => navigate(`/edit/${id}`)}
                 />
                 <img
                   src="/icons/delete.svg"
                   alt="Arrow"
-                  className="w-6 h-6 cursor-pointer"
+                  className="w-6 h-6 cursor-pointer delete"
                   onClick={handleDelete}
                 />
               </>
@@ -485,7 +485,7 @@ const BlogDetail = () => {
             <img
               src="/icons/share.svg"
               alt="Arrow"
-              className="w-6 h-6 cursor-pointer"
+              className="w-6 h-6 cursor-pointer share"
             />
           </div>
         </div>
