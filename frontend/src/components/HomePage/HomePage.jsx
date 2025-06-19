@@ -6,7 +6,7 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Loader from "../Loader/Loader";
 import axiosInstance from "../../utils/axiosInstance";
-import "./Homepage.css";
+import "./HomePage.css";
 
 const HomePage = () => {
   const [blogs, setBlogs] = useState([]);
