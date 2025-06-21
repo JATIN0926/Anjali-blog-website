@@ -1,7 +1,10 @@
 // comment.controller.js
 import Comment from "../models/comment.model.js";
+import User from "../models/user.model.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { ApiError } from "../utils/ApiError.js";
+import Blog from "../models/blog.model.js";
+import { publishNotification } from "../redis/redisPublisher.js";
 
 export const createComment = async (req, res, next) => {
   const { blogId, content, parentCommentId = null } = req.body;
@@ -21,6 +24,25 @@ export const createComment = async (req, res, next) => {
       "userId",
       "name photoURL"
     );
+
+    if (!req.user.isAdmin) {
+      const [user, blog] = await Promise.all([
+        User.findById(userId).select("name photoURL"),
+        Blog.findById(blogId).select("title"),
+      ]);
+
+      await publishNotification("new_notification", {
+        type: "comment",
+        message: `${user.name} commented on "${blog.title}"`,
+        blogId: blog._id,
+        user: user._id,
+        userSnapshot: {
+          name: user.name,
+          photoURL: user.photoURL,
+        },
+        blogTitleSnapshot: blog.title,
+      });
+    }
     res
       .status(201)
       .json(new ApiResponse(201, populatedComment, "Comment created"));
@@ -142,7 +164,10 @@ export const replyToComment = async (req, res) => {
     throw new ApiError(400, "Missing required fields");
   }
 
-  const parent = await Comment.findById(parentCommentId);
+  const parent = await Comment.findById(parentCommentId).populate(
+    "userId",
+    "isAdmin"
+  );
   if (!parent) {
     throw new ApiError(404, "Parent comment not found");
   }
@@ -155,6 +180,25 @@ export const replyToComment = async (req, res) => {
   });
 
   const populatedReply = await reply.populate("userId", "name photoURL");
+
+  if (parent.userId.isAdmin){
+    const [user, blog] = await Promise.all([
+      User.findById(req.user._id).select("name photoURL"),
+      Blog.findById(blogId).select("title"),
+    ]);
+
+    await publishNotification("new_notification", {
+      type: "reply",
+      message: `${user.name} replied to your comment on "${blog.title}"`,
+      blogId: blog._id,
+      user: user._id,
+      userSnapshot: {
+        name: user.name,
+        photoURL: user.photoURL,
+      },
+      blogTitleSnapshot: blog.title,
+    });
+  }
 
   return res
     .status(201)

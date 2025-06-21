@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import dotenv from "dotenv";
+import { publishNotification } from "../redis/redisPublisher.js";
 dotenv.config();
 
 const client = new OAuth2Client(process.env.FIREBASE_CLIENT_ID);
@@ -25,6 +26,16 @@ export const loginWithOneTap = async (req, res) => {
     let user = await User.findOne({ uid });
     if (!user) {
       user = await User.create({ name, email, photoURL, uid });
+
+      await publishNotification("new_notification", {
+        type: "signup",
+        message: `${name} just signed up!`,
+        user: user._id,
+        userSnapshot: {
+          name,
+          photoURL,
+        },
+      });
     }
 
     const token = jwt.sign(
@@ -62,6 +73,16 @@ export const loginWithFirebase = async (req, res) => {
     let user = await User.findOne({ $or: [{ uid }, { email }] });
     if (!user) {
       user = await User.create({ name: displayName, email, photoURL, uid });
+
+      await publishNotification("new_notification", {
+        type: "signup",
+        message: `${displayName} just signed up!`,
+        user: user._id,
+        userSnapshot: {
+          name: displayName,
+          photoURL,
+        },
+      });
     }
 
     const jwtToken = jwt.sign(

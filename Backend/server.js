@@ -7,11 +7,11 @@ import userRoutes from "./src/routes/user.route.js";
 import blogRoutes from "./src/routes/blog.route.js";
 import planRoutes from "./src/routes/plan.route.js";
 import commentRoutes from "./src/routes/comment.route.js";
-
+import notificationRoutes from "./src/routes/notification.route.js";
+import "./src/redis/redisSubscriber.js";
 dotenv.config();
 
 const app = express();
-
 
 app.use(
   cors({
@@ -35,6 +35,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/blogs", blogRoutes);
 app.use("/api/plans", planRoutes);
 app.use("/api/comments", commentRoutes);
+app.use("/api/notifications", notificationRoutes);
 
 const PORT = process.env.PORT || 5000;
 

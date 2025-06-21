@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import toast from "react-hot-toast";
 import { setUser } from "../../redux/slices/userSlice";
@@ -15,6 +15,25 @@ const SettingsPage = () => {
     medium: user?.medium || "",
     instagram: user?.instagram || "",
   });
+  const [activeTab, setActiveTab] = useState("contacts");
+
+  const [notifications, setNotifications] = useState([]);
+
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      try {
+        const res = await axiosInstance.get("/api/notifications/latest");
+        console.log("res", res.data);
+        setNotifications(res.data.data || []);
+      } catch (err) {
+        console.error("Failed to fetch notifications:", err);
+      }
+    };
+
+    if (activeTab === "notifications") {
+      fetchNotifications();
+    }
+  }, [activeTab]);
 
   const handleSave = async (field) => {
     if (!inputValues[field] || inputValues[field] === user?.[field]) {
@@ -86,12 +105,68 @@ const SettingsPage = () => {
           Settings
         </h1>
 
-        <div className="flex flex-col gap-10 text-[#201F1F]">
-          {renderField("Email Address", "email")}
-          {renderField("LinkedIn", "linkedin")}
-          {renderField("Medium", "medium")}
-          {renderField("Instagram", "instagram")}
+        <div className="w-full border-b border-gray-300 flex gap-8 text-lg">
+          <button
+            className={`pb-2 cursor-pointer ${
+              activeTab === "contacts"
+                ? "border-b-2 border-black font-semibold"
+                : "text-gray-500"
+            }`}
+            onClick={() => setActiveTab("contacts")}
+          >
+            My Contacts
+          </button>
+          <button
+            className={`pb-2 cursor-pointer ${
+              activeTab === "notifications"
+                ? "border-b-2 border-black font-semibold"
+                : "text-gray-500"
+            }`}
+            onClick={() => setActiveTab("notifications")}
+          >
+            Notifications
+          </button>
         </div>
+
+        {activeTab === "contacts" ? (
+          <div className="flex flex-col gap-10 text-[#201F1F]">
+            {renderField("Email Address", "email")}
+            {renderField("LinkedIn", "linkedin")}
+            {renderField("Medium", "medium")}
+            {renderField("Instagram", "instagram")}
+          </div>
+        ) : (
+          <div className="flex flex-col gap-6 mt-4">
+            {notifications.length === 0 ? (
+              <p className="text-gray-600 text-lg">No notifications yet.</p>
+            ) : (
+              notifications.map((notif) => (
+                <div
+                  key={notif._id}
+                  className="flex items-start gap-4 border-b pb-4"
+                >
+                  <img
+                    src={notif.user?.photoURL || "/icons/user.png"}
+                    alt="avatar"
+                    className="w-10 h-10 rounded-full object-cover"
+                  />
+                  <div>
+                    <p className="text-[1rem] font-medium text-[#201F1F]">
+                      {notif.message}
+                    </p>
+                    <p className="text-sm text-gray-500 mt-1">
+                      {new Date(notif.createdAt).toLocaleDateString("en-US", {
+                        month: "long",
+                        day: "numeric",
+                        year: "numeric",
+                      })}
+                    </p>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
