@@ -29,7 +29,7 @@ app.use(express.urlencoded({ extended: true, limit: "16kb" }));
 app.use(cookieParser());
 
 app.get("/", (req, res) => {
-  res.send("Welcome to the Anjali Blogs API !");
+  res.send("Welcome to the Anjali Blogs API !!");
 });
 
 app.use("/api/users", userRoutes);
