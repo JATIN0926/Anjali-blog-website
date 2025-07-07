@@ -11,4 +11,5 @@ jobs:
     steps:
       - name: Call Render Deploy Hook
         run: |
-          curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+          echo "Calling Render Deploy Hook"
+          curl -v -X POST ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
