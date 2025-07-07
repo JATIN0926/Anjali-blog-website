@@ -3,8 +3,6 @@ name: Deploy Backend to Render
 on:
   push:
     branches: [main]
-    paths:
-      - 'backend/**'
 
 jobs:
   deploy:
@@ -12,7 +10,7 @@ jobs:
     steps:
       - name: Trigger Render Deployment
         env:
-          DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+          deploy_url: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
         run: |
           echo "Triggering Render deploy via hook..."
           curl "$DEPLOY_HOOK_URL"
