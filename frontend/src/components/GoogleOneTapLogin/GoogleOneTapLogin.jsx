@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "../../redux/slices/userSlice";
@@ -8,6 +8,8 @@ import axiosInstance from "../../utils/axiosInstance";
 const GoogleOneTapLogin = () => {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.currentUser);
+  const didSignInRef = useRef(false);
+
   useEffect(() => {
     if (user) return;
     /* global google */
@@ -23,6 +25,7 @@ const GoogleOneTapLogin = () => {
 
             dispatch(setUser(res.data.data.user));
             dispatch(setShowFallbackPopup(false));
+            didSignInRef.current = true;
 
             toast.success("Signed in successfully!", { id: loginToast });
 
@@ -38,14 +41,16 @@ const GoogleOneTapLogin = () => {
       google.accounts.id.prompt((notification) => {
         const dismissedReason = notification.getDismissedReason?.();
 
-        if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+        if (
+          !didSignInRef.current &&
+          (notification.isNotDisplayed() || notification.isSkippedMoment())
+        ) {
           console.warn("Google One Tap dismissed or skipped:", dismissedReason);
           dispatch(setShowFallbackPopup(true));
         }
 
-        // 🛑 Do NOT dispatch fallback popup if credential was returned
         if (dismissedReason === "credential_returned") {
-          console.log("Credential returned successfully, no fallback needed");
+          console.log("Credential returned successfully");
         }
       });
     }

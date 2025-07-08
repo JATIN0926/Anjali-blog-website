@@ -1,3 +1,4 @@
+import { setShowFallbackPopup } from "../redux/slices/authUiSlice";
 import axiosInstance from "./axiosInstance";
 
 export const loginWithGoogle = (dispatch) => {
@@ -28,7 +29,7 @@ export const loginWithGoogle = (dispatch) => {
       ) {
         console.warn("Google One Tap dismissed/skipped");
         if (dispatch) {
-          dispatch({ type: "authUi/setShowFallbackPopup", payload: true });
+          dispatch(setShowFallbackPopup(true));
         }
       }
     });

@@ -15,7 +15,11 @@ const Footer = () => {
       // User is signed in, so sign out
       const logoutToast = toast.loading("Signing you out...");
       try {
-        await axiosInstance.post("/api/users/logout", {}, { withCredentials: true });
+        await axiosInstance.post(
+          "/api/users/logout",
+          {},
+          { withCredentials: true }
+        );
         dispatch(logoutUser());
         toast.success("Signed out successfully!", { id: logoutToast });
       } catch (err) {
@@ -23,19 +27,22 @@ const Footer = () => {
         console.error("Logout failed", err);
       }
     } else {
-      dispatch(setShowFallbackPopup(true));
       // const loginToast = toast.loading("Signing you in...");
       try {
-        const userData = await loginWithGoogle();
+        const userData = await loginWithGoogle(dispatch);
         if (userData) {
           dispatch(setUser(userData));
+          console.log("inside if");
           toast.success("Signed in successfully!");
         } else {
-          toast.error("Login failed. Please try again.");
+          console.log("inside else");
+          dispatch(setShowFallbackPopup(true));
         }
       } catch (err) {
+        console.log("inside catch");
+        dispatch(setShowFallbackPopup(true));
         toast.error("Login failed. Please try again.");
-        console.error("Login failed", err);
+        console.error("Login failed. Please try again Now !", err);
       }
     }
   };
@@ -121,7 +128,7 @@ const Footer = () => {
             </a>
           </div>
 
-          {user?.isAdmin ? (
+          {user ? (
             <button
               className="bg-[#DEDEDE] px-4 py-2 rounded-xl text-[0.9rem] cursor-pointer"
               onClick={handleAuthClick}
