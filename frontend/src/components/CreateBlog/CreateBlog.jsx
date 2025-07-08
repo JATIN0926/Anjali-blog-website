@@ -16,6 +16,7 @@ import {
 } from "../../redux/slices/blogDraftSlice.js";
 import "./style.css";
 import axiosInstance from "../../utils/axiosInstance.js";
+import axios from "axios";
 
 const CreateBlog = () => {
   const fileInputRef = useRef();
@@ -129,7 +130,7 @@ const CreateBlog = () => {
     formData.append("upload_preset", "blog_preset");
 
     try {
-      const response = await axiosInstance.post(
+      const response = await axios.post(
         `https://api.cloudinary.com/v1_1/${
           import.meta.env.VITE_CLOUDINARY_CLOUD_NAME
         }/upload`,
@@ -181,7 +182,7 @@ const CreateBlog = () => {
     formData.append("upload_preset", "blog_preset");
 
     try {
-      const response = await axiosInstance.post(
+      const response = await axios.post(
         `https://api.cloudinary.com/v1_1/${
           import.meta.env.VITE_CLOUDINARY_CLOUD_NAME
         }/upload`,
