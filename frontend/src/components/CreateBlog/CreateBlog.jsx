@@ -104,7 +104,9 @@ const CreateBlog = () => {
   if (!editor) return null;
 
   const addSeparator = () => {
-    editor.commands.insertContent('<p class="separator">•  •  •</p><br/>');
+    editor.commands.insertContent(
+      '<p class="separator">•     •     •</p><br/>'
+    );
   };
 
   const handleImageUploadClick = () => {
@@ -151,6 +153,18 @@ const CreateBlog = () => {
             attrs: {
               src: fileUrl,
             },
+          },
+          {
+            type: "paragraph",
+            attrs: {
+              class: "small-desc",
+            },
+            content: [
+              {
+                type: "text",
+                text: "Type your caption here...",
+              },
+            ],
           },
           {
             type: "paragraph",

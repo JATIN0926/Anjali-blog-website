@@ -12,9 +12,14 @@
 
   
 .tiptap p {
-    font-size: 1.5rem;
-    line-height: 2rem;
-    display: block;
+  font-size: 1.2rem;
+  color: #201F1F;
+  line-height: 2rem;
+  font-family: 'Inter', sans-serif;
+  /* font-family: 'Times New Roman', Times, serif; */
+  font-weight: 200;
+  letter-spacing: 0px;
+  display: block;
   }
   
   .tiptap h1 {
@@ -29,6 +34,7 @@
   .tiptap h2 {
     font-size: 2rem;
     font-weight: bold;
+    color: #201F1F;
     font-family: 'Inter', sans-serif;
     font-weight: 600;
     line-height: 2.25rem;
@@ -37,10 +43,15 @@
   .tiptap h3 {
     font-size: 1.7rem;
     font-weight: bold;
+    color: #201F1F;
     font-family: 'Inter', sans-serif;
     font-weight: 700;
     line-height: auto;
   }
+
+  /* .tiptap b {
+    font-weight: 900;
+  } */
   
   .tiptap .title {
     font-size: 2.7rem;
@@ -58,18 +69,24 @@
     text-align: center;
   }
   .tiptap .regular-para {
-    font-size: 1.1rem;
+    font-size: 1.2rem;
     color: #201F1F;
     line-height: 2rem;
     font-family: 'Inter', sans-serif;
-    font-weight: 400;
+    font-weight: 200;
     letter-spacing: 0px;
   }
   
   .tiptap .quote-para {
-    font-size: 2.6rem;
-    font-family: serif;
-    line-height: 1.5rem;
+    padding-left: 1rem;
+    border-left: 3px solid black;
+    color: #201F1F;
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    font-size: 1.1rem;
+    line-height: 2rem;
+    font-style: italic;
+    height: 2rem;
   }
 
   .tiptap .Value_Statement {
@@ -83,13 +100,15 @@
     margin: 45px auto;
   }
   
-  .tiptap blockquote {
+  .tiptap blockquote p {
     padding-left: 1rem;
-    border-left: 4px solid black;
+    border-left: 3px solid black;
     color: #201F1F;
     font-family: 'Inter', sans-serif;
-    font-weight: 100;
-    font-size: 0.5rem;
+    font-weight: 600;
+    font-size: 1.1rem;
+    line-height: 2rem;
+    font-style: italic;
   }
   
   .tiptap ul {
@@ -99,9 +118,10 @@
   
   .tiptap .separator {
     text-align: center;
-    font-size: 2rem;
+    font-size: 1rem;
     color: #201F1F;
     margin: 80px auto;
+    gap:3rem;
   }
 
   
