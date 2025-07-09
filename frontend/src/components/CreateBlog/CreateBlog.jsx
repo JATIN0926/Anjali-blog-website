@@ -55,14 +55,11 @@ const CreateBlog = () => {
           ) {
             event.preventDefault();
 
-            // Create a new empty regular paragraph
             const newParagraph = schema.nodes.paragraph.create();
 
-            // Insert it after the current node
             const insertPos = pos + node.nodeSize;
             let tr = state.tr.insert(insertPos, newParagraph);
 
-            // Move cursor inside the new paragraph
             tr = tr.setSelection(
               state.selection.constructor.near(tr.doc.resolve(insertPos + 1))
             );
@@ -438,7 +435,17 @@ const CreateBlog = () => {
           onClick={() => applyClassToCurrentParagraph("quote-para")}
           className="px-4 py-1 bg-gray-200 rounded cursor-pointer"
         >
-          Quote Para
+          Quote Regular
+        </button>
+        <button
+          onClick={() => editor.chain().focus().toggleBlockquote().run()}
+          className={`px-4 py-1 rounded cursor-pointer ${
+            editor.isActive("blockquote")
+              ? "bg-black text-white"
+              : "bg-gray-200"
+          }`}
+        >
+          Quote Bold
         </button>
         <button
           onClick={() => editor.chain().focus().toggleBold().run()}
@@ -457,16 +464,6 @@ const CreateBlog = () => {
           Italic
         </button>
 
-        <button
-          onClick={() => editor.chain().focus().toggleBlockquote().run()}
-          className={`px-4 py-1 rounded cursor-pointer ${
-            editor.isActive("blockquote")
-              ? "bg-black text-white"
-              : "bg-gray-200"
-          }`}
-        >
-          Blockquote
-        </button>
         <button
           onClick={() => applyClassToCurrentParagraph("Value_Statement")}
           className="px-4 py-1 bg-gray-200 rounded cursor-pointer"
