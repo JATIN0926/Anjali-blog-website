@@ -14,7 +14,7 @@
 .tiptap p {
   font-size: 1.2rem;
   color: #201F1F;
-  line-height: 2rem;
+  line-height: 1.8rem;
   font-family: 'Inter', sans-serif;
   /* font-family: 'Times New Roman', Times, serif; */
   font-weight: 200;
@@ -71,22 +71,21 @@
   .tiptap .regular-para {
     font-size: 1.2rem;
     color: #201F1F;
-    line-height: 2rem;
+    line-height: 1.8rem;
     font-family: 'Inter', sans-serif;
     font-weight: 300;
     letter-spacing: 0px;
   }
   
-  .tiptap .quote-para {
+  .tiptap p.quote-para {
     padding-left: 1rem;
     border-left: 3px solid black;
     color: #201F1F;
     font-family: 'Inter', sans-serif;
-    font-weight: 400;
     font-size: 1.1rem;
     line-height: 2rem;
     font-style: italic;
-    height: 2rem;
+    font-weight: 400;
   }
 
   .tiptap .Value_Statement {

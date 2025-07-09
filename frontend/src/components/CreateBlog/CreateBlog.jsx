@@ -41,6 +41,39 @@ const CreateBlog = () => {
       ListItem,
     ],
     content: content || "",
+    editorProps: {
+      handleKeyDown(view, event) {
+        if (event.key === "Enter" && !event.shiftKey) {
+          const { state, dispatch } = view;
+          const { selection, schema } = state;
+          const pos = selection.$from.before(selection.$from.depth);
+          const node = state.doc.nodeAt(pos);
+
+          if (
+            node?.type.name === "paragraph" &&
+            node.attrs.class === "quote-para"
+          ) {
+            event.preventDefault();
+
+            // Create a new empty regular paragraph
+            const newParagraph = schema.nodes.paragraph.create();
+
+            // Insert it after the current node
+            const insertPos = pos + node.nodeSize;
+            let tr = state.tr.insert(insertPos, newParagraph);
+
+            // Move cursor inside the new paragraph
+            tr = tr.setSelection(
+              state.selection.constructor.near(tr.doc.resolve(insertPos + 1))
+            );
+
+            dispatch(tr);
+            return true;
+          }
+        }
+        return false;
+      },
+    },
   });
   const [tags, setLocalTags] = useState(storedTags || []);
   const [currentTag, setCurrentTag] = useState("");
