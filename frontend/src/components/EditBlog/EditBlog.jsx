@@ -10,6 +10,7 @@ import toast from "react-hot-toast";
 import "../CreateBlog/style.css";
 import Loader from "../Loader/Loader";
 import axiosInstance from "../../utils/axiosInstance";
+import { Separator } from "../CreateBlog/Separator";
 
 const EditBlog = () => {
   const { id } = useParams();
@@ -35,11 +36,11 @@ const EditBlog = () => {
       Image,
       BulletList,
       ListItem,
+      Separator,
     ],
-    content: "", // Initial empty, will update on fetch
+    content: "",
   });
 
-  // ✅ Fetch blog data and update editor content
   useEffect(() => {
     const fetchBlog = async () => {
       try {
@@ -74,7 +75,13 @@ const EditBlog = () => {
     }
   };
   const addSeparator = () => {
-    editor.commands.insertContent('<p class="separator">•  •  •</p><br/>');
+    editor
+      .chain()
+      .focus()
+      .insertContent({
+        type: "separator",
+      })
+      .run();
   };
 
   const handleImageUploadClick = () => {
