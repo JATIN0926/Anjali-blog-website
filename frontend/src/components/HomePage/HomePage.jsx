@@ -108,7 +108,7 @@ const HomePage = () => {
                 style={{ fontFamily: "ScheherazadeNew Regular, monospace" }}
               >
                 {activeTab === "social"
-                  ? "Here, you will find articles that will tear Apart the Scripts Society Wrote for Us."
+                  ? "Here, you will find Patterns of behavior, belief, and mindset — across time, place, and culture."
                   : "Here, you will find these are moments I kept. Messy, unsure, and mine"}
               </h1>
               <div

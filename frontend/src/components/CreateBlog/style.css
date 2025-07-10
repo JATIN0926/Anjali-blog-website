@@ -16,8 +16,7 @@
   color: #201F1F;
   line-height: 2rem;
   font-family: 'Inter', sans-serif;
-  /* font-family: 'Times New Roman', Times, serif; */
-  font-weight: 200;
+  font-weight: 400;
   letter-spacing: 0px;
   display: block;
   }
@@ -33,25 +32,27 @@
   
   .tiptap h2 {
     font-size: 2rem;
-    font-weight: bold;
     color: #201F1F;
     font-family: 'Inter', sans-serif;
-    font-weight: 600;
+    font-weight: 700;
     line-height: 2.25rem;
   }
   
   .tiptap h3 {
     font-size: 1.7rem;
-    font-weight: bold;
     color: #201F1F;
     font-family: 'Inter', sans-serif;
     font-weight: 700;
     line-height: auto;
   }
 
-  /* .tiptap b {
-    font-weight: 900;
-  } */
+  .tiptap strong {
+    font-weight: 650;
+  }
+
+  .tiptap img{
+    width: 100%;
+  }
   
   .tiptap .title {
     font-size: 2.7rem;
@@ -73,7 +74,7 @@
     color: #201F1F;
     line-height: 2rem;
     font-family: 'Inter', sans-serif;
-    font-weight: 300;
+    font-weight: 400;
     letter-spacing: 0px;
   }
   
