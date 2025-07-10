@@ -17,6 +17,7 @@ import {
 import "./style.css";
 import axiosInstance from "../../utils/axiosInstance.js";
 import axios from "axios";
+import { Separator } from "./Separator.js";
 
 const CreateBlog = () => {
   const fileInputRef = useRef();
@@ -39,6 +40,7 @@ const CreateBlog = () => {
       Image,
       BulletList,
       ListItem,
+      Separator,
     ],
     content: content || "",
     editorProps: {
@@ -134,9 +136,13 @@ const CreateBlog = () => {
   if (!editor) return null;
 
   const addSeparator = () => {
-    editor.commands.insertContent(
-      '<p class="separator">•     •     •</p><br/>'
-    );
+    editor
+      .chain()
+      .focus()
+      .insertContent({
+        type: "separator",
+      })
+      .run();
   };
 
   const handleImageUploadClick = () => {
