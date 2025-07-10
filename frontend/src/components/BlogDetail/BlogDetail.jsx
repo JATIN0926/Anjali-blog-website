@@ -9,6 +9,7 @@ import { setUser } from "../../redux/slices/userSlice";
 import { loginWithGoogle } from "../../utils/loginWithGoogle";
 import axiosInstance from "../../utils/axiosInstance";
 import "./BlogDetail.css"
+import "../CreateBlog/style.css"
 const BlogDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -489,7 +490,6 @@ const BlogDetail = () => {
             />
           </div>
         </div>
-        {/* Future scope: Comments section */}
         <div
           ref={commentSectionRef}
           className="mt-10 flex flex-col items-start justify-center gap-8"
@@ -502,7 +502,7 @@ const BlogDetail = () => {
           </h2>
           {/* Comment input box */}
           {user ? (
-            <div className="flex flex-col items-start justify-center gap-4 w-full border-b border-b-[#E7E6E6] py-8">
+            <div className={`flex flex-col items-start justify-center gap-4 w-full border-b border-b-[#E7E6E6] py-8`}>
               <div className="flex items-center justify-center gap-2">
                 <img
                   src={
@@ -563,12 +563,7 @@ const BlogDetail = () => {
           {/* Comment list */}
           {comments.length === 0 ? (
             <div className="flex justify-center items-center mt-8 w-full">
-              <p
-                className="text-gray-500 text-center text-2xl"
-                style={{ fontFamily: "Inter, sans-serif " }}
-              >
-                No comments yet.
-              </p>
+             
             </div>
           ) : (
             <div className="mt-8 flex flex-col gap-10 w-full">
