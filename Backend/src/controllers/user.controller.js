@@ -138,7 +138,7 @@ export const updateSocialLinks = async (req, res) => {
     if (linkedin !== undefined) updates.linkedin = linkedin;
     if (medium !== undefined) updates.medium = medium;
     if (instagram !== undefined) updates.instagram = instagram;
-    if (email !== undefined) updates.email = email;
+    if (email !== undefined) updates.contact_email = email;
 
     const user = await User.findOne({ uid });
 

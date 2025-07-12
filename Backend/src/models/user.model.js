@@ -14,6 +14,12 @@ const userSchema = new mongoose.Schema(
       trim: true,
       lowercase: true,
     },
+    contact_email: {
+      type: String,
+      unique: true,
+      trim: true,
+      lowercase: true,
+    },
     linkedin: {
       type: String,
       required: false,

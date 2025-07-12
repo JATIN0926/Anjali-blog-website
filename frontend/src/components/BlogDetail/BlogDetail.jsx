@@ -8,8 +8,9 @@ import Footer from "../HomePage/Footer/Footer";
 import { setUser } from "../../redux/slices/userSlice";
 import { loginWithGoogle } from "../../utils/loginWithGoogle";
 import axiosInstance from "../../utils/axiosInstance";
-import "./BlogDetail.css"
-import "../CreateBlog/style.css"
+import html2pdf from "html2pdf.js";
+import "./BlogDetail.css";
+import "../CreateBlog/style.css";
 const BlogDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -302,6 +303,30 @@ const BlogDetail = () => {
     }
   };
 
+  const downloadAsPdf = () => {
+    console.log("inside");
+
+    setTimeout(() => {
+      const element = document.getElementById("blog-pdf");
+
+      if (!element) {
+        console.error("blog-pdf element not found");
+        return;
+      }
+
+      const opt = {
+        margin: 0.5,
+        filename: `${blog.title || "blog"}.pdf`,
+        image: { type: "jpeg", quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true },
+        jsPDF: { unit: "in", format: "letter", orientation: "portrait" },
+        pagebreak: { mode: ["avoid-all", "css", "legacy"] },
+      };
+
+      html2pdf().set(opt).from(element).save();
+    }, 100);
+  };
+
   if (loading) return <Loader />;
 
   if (!blog)
@@ -350,6 +375,7 @@ const BlogDetail = () => {
               {blog.timeToRead + " "} min read
             </p>
           </div>
+         
           <div className="flex items-center justify-center gap-3">
             <p className="text-base text-[#5F5B5B] ">
               {new Date(blog.datePosted).toLocaleDateString("en-US", {
@@ -412,6 +438,12 @@ const BlogDetail = () => {
               </>
             )}
             <img
+              src="/icons/Download.svg"
+              alt="Arrow"
+              className="w-6 h-6 cursor-pointer share"
+              onClick={downloadAsPdf}
+            />
+            <img
               src="/icons/share.svg"
               alt="Arrow"
               className="w-6 h-6 cursor-pointer share"
@@ -419,10 +451,55 @@ const BlogDetail = () => {
           </div>
         </div>
 
+        <div className="flex flex-col gap-3 w-full m-auto">
+          <div
+            className="tiptap w-full text-[#201F1F]"
+            dangerouslySetInnerHTML={{ __html: blog.content }}
+          ></div>
+        </div>
+
+        {/* hidden content for pdf download */}
+
         <div
-          className="tiptap w-full text-[#201F1F]"
-          dangerouslySetInnerHTML={{ __html: blog.content }}
-        ></div>
+          style={{
+            position: "absolute",
+            top: "-9999px",
+            left: "-9999px",
+            visibility: "hidden",
+            pointerEvents: "none",
+          }}
+        >
+          <div
+            id="blog-pdf"
+            className="flex flex-col gap-6 w-full m-auto px-6 py-8"
+          >
+            <h1
+              className="text-[2.7rem] leading-[3.5rem] font-semibold mb-4 text-black tracking-[-1px]"
+              style={{ fontFamily: "ScheherazadeNew Regular, monospace" }}
+            >
+              {blog.title}
+            </h1>
+            <div
+              className="flex items-center justify-between text-base text-[#201F1F] mb-4"
+              style={{ fontFamily: "ScheherazadeNew Regular, monospace" }}
+            >
+              <p>{blog.type === "Article" ? "Social Pattern" : "My Diary"}</p>
+              <p>{blog.timeToRead + " "} min read</p>
+              <p>
+                {new Date(blog.datePosted).toLocaleDateString("en-US", {
+                  month: "long",
+                  day: "numeric",
+                  year: "numeric",
+                })}
+              </p>
+            </div>
+            <div
+              className="tiptap w-full text-[#201F1F]"
+              dangerouslySetInnerHTML={{ __html: blog.content }}
+            ></div>
+          </div>
+        </div>
+
         {blog.type === "Diary" && blog.next && (
           <h1
             className="py-10 text-[1.2rem] tracking-[-0.24px] font-semibold self-center hover:underline cursor-pointer"
@@ -502,7 +579,9 @@ const BlogDetail = () => {
           </h2>
           {/* Comment input box */}
           {user ? (
-            <div className={`flex flex-col items-start justify-center gap-4 w-full border-b border-b-[#E7E6E6] py-8`}>
+            <div
+              className={`flex flex-col items-start justify-center gap-4 w-full border-b border-b-[#E7E6E6] py-8`}
+            >
               <div className="flex items-center justify-center gap-2">
                 <img
                   src={
@@ -562,9 +641,7 @@ const BlogDetail = () => {
 
           {/* Comment list */}
           {comments.length === 0 ? (
-            <div className="flex justify-center items-center mt-8 w-full">
-             
-            </div>
+            <div className="flex justify-center items-center mt-8 w-full"></div>
           ) : (
             <div className="mt-8 flex flex-col gap-10 w-full">
               {comments.map((c) => (

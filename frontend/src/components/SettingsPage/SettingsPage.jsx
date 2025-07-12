@@ -10,7 +10,7 @@ const SettingsPage = () => {
 
   const [editingField, setEditingField] = useState(null);
   const [inputValues, setInputValues] = useState({
-    email: user?.email || "",
+    email: user?.contact_email || "",
     linkedin: user?.linkedin || "",
     medium: user?.medium || "",
     instagram: user?.instagram || "",
@@ -41,8 +41,9 @@ const SettingsPage = () => {
       return;
     }
 
+    let toastId;
     try {
-      const toastId = toast.loading("Updating...");
+      toastId = toast.loading("Updating...");
       const res = await axiosInstance.patch(
         "/api/users/socials",
         { [field]: inputValues[field] },
@@ -52,7 +53,7 @@ const SettingsPage = () => {
       toast.success("Updated successfully!", { id: toastId });
       setEditingField(null);
     } catch (err) {
-      toast.error("Update failed");
+      toast.error("Update failed", { id: toastId });
       console.error(err);
     }
   };
@@ -130,7 +131,7 @@ const SettingsPage = () => {
 
         {activeTab === "contacts" ? (
           <div className="flex flex-col gap-10 text-[#201F1F]">
-            {renderField("Email Address", "email")}
+            {renderField("Email Address", "contact_email")}
             {renderField("LinkedIn", "linkedin")}
             {renderField("Medium", "medium")}
             {renderField("Instagram", "instagram")}
