@@ -1,5 +1,6 @@
 import express from "express";
 import {
+  getCurrentUser,
   loginWithFirebase,
   loginWithOneTap,
   logout,
@@ -12,5 +13,6 @@ router.post("/google-onetap", loginWithOneTap);
 router.post("/google-popup", loginWithFirebase);
 router.post("/logout", logout);
 router.patch("/socials", verifyToken, isAdmin, updateSocialLinks);
+router.get("/me", verifyToken, getCurrentUser);
 
 export default router;

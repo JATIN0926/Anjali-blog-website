@@ -156,3 +156,18 @@ export const updateSocialLinks = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+export const getCurrentUser = async (req, res) => {
+  try {
+    const { _id, name, email, photoURL, uid, isAdmin } = req.user;
+
+    return res.status(200).json(
+      new ApiResponse(200, {
+        user: { _id, name, email, photoURL, uid, isAdmin },
+      })
+    );
+  } catch (error) {
+    console.error("Failed to get current user", error);
+    return res.status(500).json(new ApiError(500, "Failed to fetch user"));
+  }
+};

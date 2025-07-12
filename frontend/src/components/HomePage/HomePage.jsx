@@ -2,11 +2,12 @@ import React, { useEffect, useState } from "react";
 import BlogCard from "./BlogCard/BlogCard";
 import Footer from "./Footer/Footer";
 import GoogleOneTapLogin from "../GoogleOneTapLogin/GoogleOneTapLogin";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Loader from "../Loader/Loader";
 import axiosInstance from "../../utils/axiosInstance";
 import "./HomePage.css";
+import { setUser } from "../../redux/slices/userSlice";
 
 const HomePage = () => {
   const [blogs, setBlogs] = useState([]);
@@ -16,6 +17,7 @@ const HomePage = () => {
   const [activeTab, setActiveTab] = useState("social");
   const user = useSelector((state) => state.user.currentUser);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const fetchBlogs = async () => {
@@ -35,6 +37,16 @@ const HomePage = () => {
 
     fetchBlogs();
   }, [activeTab]);
+
+  useEffect(() => {
+    axiosInstance.get("/api/users/me")
+      .then((res) => {
+        dispatch(setUser(res.data.user));
+      })
+      .catch(() => {
+        dispatch(setUser(null));
+      });
+  }, []);
 
   return (
     <>
