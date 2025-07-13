@@ -19,6 +19,9 @@ const GoogleOneTapLogin = () => {
         callback: async (response) => {
           const loginToast = toast.loading("Signing you in...");
           try {
+            if (!response.credential) {
+              console.log("No credential received");
+            }
             const res = await axiosInstance.post("/api/users/google-onetap", {
               credential: response.credential,
             });
