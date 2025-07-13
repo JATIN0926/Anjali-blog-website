@@ -39,11 +39,13 @@ const HomePage = () => {
   }, [activeTab]);
 
   useEffect(() => {
-    axiosInstance.get("/api/users/me")
+    axiosInstance
+      .get("/api/users/me")
       .then((res) => {
-        dispatch(setUser(res.data.user));
+        dispatch(setUser(res.data.data.user));
       })
-      .catch(() => {
+      .catch((err) => {
+        console.log("User not logged in:", err.response?.data || err.message);
         dispatch(setUser(null));
       });
   }, []);

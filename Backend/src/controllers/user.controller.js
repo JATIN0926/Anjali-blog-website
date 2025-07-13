@@ -50,6 +50,7 @@ export const loginWithOneTap = async (req, res) => {
       httpOnly: true,
       secure: true,
       sameSite: "none",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
     const { createdAt, updatedAt, __v, ...safeUser } = user.toObject();
@@ -95,6 +96,7 @@ export const loginWithFirebase = async (req, res) => {
       httpOnly: true,
       secure: true,
       sameSite: "none",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
     const { createdAt, updatedAt, __v, ...safeUser } = user.toObject();
@@ -159,6 +161,12 @@ export const updateSocialLinks = async (req, res) => {
 
 export const getCurrentUser = async (req, res) => {
   try {
+    if (!req.user) {
+      return res
+        .status(401)
+        .json(new ApiError(401, "Unauthorized: User not authenticated"));
+    }
+
     const { _id, name, email, photoURL, uid, isAdmin } = req.user;
 
     return res.status(200).json(
