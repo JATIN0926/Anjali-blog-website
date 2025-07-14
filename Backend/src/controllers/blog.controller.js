@@ -13,7 +13,7 @@ export const createBlog = async (req, res) => {
     if (!title || !content || !uid) {
       return res.status(400).json(new ApiError(400, "Missing required fields"));
     }
-    
+
     if (status && !["Draft", "Published"].includes(status)) {
       return res.status(400).json(new ApiError(400, "Invalid blog status"));
     }
@@ -232,5 +232,93 @@ export const toggleBlogLike = async (req, res) => {
   } catch (error) {
     console.error("Like toggle failed:", error);
     return res.status(500).json(new ApiError(500, "Failed to toggle like"));
+  }
+};
+
+export const createEmptyDraft = async (req, res) => {
+  try {
+    const { title, content, tags, type, thumbnail, status, uid } = req.body;
+
+    if (!uid) {
+      throw new ApiError(400, "UID is required");
+    }
+
+    const user = await User.findOne({ uid });
+    if (!user) {
+      throw new ApiError(404, "User not found");
+    }
+
+    const draft = await Blog.create({
+      title,
+      content,
+      tags,
+      type,
+      thumbnail,
+      uid,
+      user: user._id,
+      status,
+    });
+
+    return res
+      .status(201)
+      .json(new ApiResponse(201, draft, "Initial draft created"));
+  } catch (error) {
+    console.error("Initial Draft Error:", error);
+    return res.status(500).json(new ApiError(500, "Server error"));
+  }
+};
+
+export const updateDraftById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { title, content, tags, type, thumbnail, status } = req.body;
+
+    const draft = await Blog.findById(id);
+
+    if (!draft) {
+      throw new ApiError(404, "Draft not found");
+    }
+
+    if (draft.status !== "Draft") {
+      throw new ApiError(400, "Only drafts can be updated using this route");
+    }
+
+    draft.title = title || "";
+    draft.content = content || "";
+    draft.tags = tags || [];
+    draft.type = type || "Not Set";
+    draft.thumbnail = thumbnail || "";
+    draft.status = status || "Draft";
+
+    const updatedDraft = await draft.save();
+
+    return res
+      .status(200)
+      .json(new ApiResponse(200, updatedDraft, "Draft updated successfully"));
+  } catch (error) {
+    console.error("Update Draft Error:", error);
+    return res.status(500).json(new ApiError(500, "Server error"));
+  }
+};
+
+export const deleteDraftById = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const draft = await Blog.findById(id);
+    if (!draft) throw new ApiError(404, "Draft not found");
+
+    if (draft.status !== "Draft") {
+      throw new ApiError(400, "Only drafts can be deleted via this route");
+    }
+
+    await Blog.findByIdAndDelete(id);
+
+    return res
+      .status(200)
+      .json(new ApiResponse(200, null, "Draft deleted successfully"));
+  } catch (error) {
+    console.error("Delete Draft Error:", error);
+    return res.status(500).json(new ApiError(500, "Server error"));
   }
 };

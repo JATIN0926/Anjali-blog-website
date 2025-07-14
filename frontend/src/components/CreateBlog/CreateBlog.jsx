@@ -13,11 +13,13 @@ import {
   setTags,
   setSelectedOption,
   setThumbnail,
+  setDraftId,
 } from "../../redux/slices/blogDraftSlice.js";
 import "./style.css";
 import axiosInstance from "../../utils/axiosInstance.js";
 import axios from "axios";
 import { Separator } from "./Separator.js";
+import debounce from "lodash.debounce";
 
 const CreateBlog = () => {
   const fileInputRef = useRef();
@@ -31,6 +33,8 @@ const CreateBlog = () => {
 
   const dropdownRef = useRef(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [lastSavedTime, setLastSavedTime] = useState(null);
+
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -77,6 +81,8 @@ const CreateBlog = () => {
   const [tags, setLocalTags] = useState(storedTags || []);
   const [currentTag, setCurrentTag] = useState("");
   const [showInput, setShowInput] = useState(false);
+  const draftId = useSelector((state) => state.blogDraft.draftId);
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -99,6 +105,83 @@ const CreateBlog = () => {
 
     return () => editor.off("update", updateReduxContent);
   }, [editor, dispatch]);
+
+  const clearBlogData = () => {
+    dispatch(setTitle(""));
+    dispatch(setContent(""));
+    dispatch(setTags([]));
+    // dispatch(setSelectedOption(""));
+    dispatch(setThumbnail(""));
+    dispatch(setDraftId(null));
+    setLocalTags([]);
+    setCurrentTag("");
+    editor?.commands.setContent("");
+  };
+
+  const createInitialDraft = async () => {
+    if (!user) {
+      toast.error("You must be logged in to start a draft");
+      return;
+    }
+
+    if (!selectedOption) {
+      toast.error("Please select type of blog !");
+      return;
+    }
+
+    clearBlogData();
+
+    try {
+      const res = await axiosInstance.post(
+        "/api/blogs/draft",
+        {
+          title,
+          content,
+          tags,
+          type: selectedOption || "Not Set",
+          thumbnail,
+          uid: user?.uid,
+          status: "Draft",
+        },
+        { withCredentials: true }
+      );
+
+      const blog = res.data.data;
+      dispatch(setDraftId(blog._id));
+      toast.success("New draft started!");
+    } catch (err) {
+      toast.error("Failed to create draft");
+      console.error("Draft creation error:", err);
+    }
+  };
+
+  useEffect(() => {
+    if (!draftId) return;
+    const autoSaveDraft = debounce(async () => {
+      try {
+        await axiosInstance.put(
+          `/api/blogs/draft/${draftId}`,
+          {
+            title,
+            content,
+            tags,
+            type: selectedOption || "Not Set",
+            thumbnail,
+            status: "Draft",
+          },
+          { withCredentials: true }
+        );
+        const now = new Date();
+        setLastSavedTime(now);
+        console.log("Auto-saved at", now.toLocaleTimeString());
+      } catch (err) {
+        console.error("Auto-save failed:", err);
+      }
+    }, 5000);
+
+    autoSaveDraft();
+    return () => autoSaveDraft.cancel();
+  }, [title, content, selectedOption, tags, thumbnail, draftId]);
 
   useEffect(() => {
     dispatch(setTags(tags));
@@ -505,7 +588,15 @@ const CreateBlog = () => {
         >
           Bullet List
         </button>
+        {lastSavedTime && (
+          <div className="text-sm text-gray-500 text-start font-mono mt-1 mb-2">
+            Auto-saved{" "}
+            {Math.floor((Date.now() - lastSavedTime.getTime()) / 1000)} seconds
+            ago
+          </div>
+        )}
       </div>
+
       <input
         type="text"
         placeholder="Enter Blog Title"
@@ -561,12 +652,20 @@ const CreateBlog = () => {
       >
         Post
       </button>
-      <button
+      {/* <button
         onClick={() => handleSubmitBlog("Draft")}
         className="mt-4 px-4 py-2 w-1/2 cursor-pointer self-center text-center bg-yellow-300 rounded-full text-sm font-medium hover:bg-yellow-400"
       >
         Save to Draft
-      </button>
+      </button> */}
+      {user && (
+        <button
+          className="mt-4 px-4 py-2 w-1/2 cursor-pointer self-center text-center bg-yellow-300 rounded-full text-sm font-medium hover:bg-yellow-400"
+          onClick={createInitialDraft}
+        >
+          Start New Draft
+        </button>
+      )}
     </div>
   );
 };

@@ -11,6 +11,7 @@ import "../CreateBlog/style.css";
 import Loader from "../Loader/Loader";
 import axiosInstance from "../../utils/axiosInstance";
 import { Separator } from "../CreateBlog/Separator";
+import debounce from "lodash.debounce";
 
 const EditBlog = () => {
   const { id } = useParams();
@@ -28,6 +29,7 @@ const EditBlog = () => {
   const [currentTag, setCurrentTag] = useState("");
   const [showInput, setShowInput] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [lastSavedTime, setLastSavedTime] = useState(null);
 
   const editor = useEditor({
     extensions: [
@@ -40,6 +42,52 @@ const EditBlog = () => {
     ],
     content: "",
   });
+
+  useEffect(() => {
+    if (!editor) return;
+
+    const updatedContent = editor.getHTML();
+
+    const autoSaveDraft = debounce(async () => {
+      try {
+        await axiosInstance.put(
+          `/api/blogs/edit/${id}`,
+          {
+            title,
+            content: updatedContent,
+            tags,
+            type,
+            thumbnail,
+            status: "Draft",
+          },
+          { withCredentials: true }
+        );
+
+        const now = new Date();
+        setLastSavedTime(now);
+        console.log("Auto-saved at", now.toLocaleTimeString());
+      } catch (err) {
+        console.error("Auto-save failed:", err);
+      }
+    }, 5000);
+
+    autoSaveDraft();
+
+    return () => autoSaveDraft.cancel();
+  }, [title, content, tags, type, thumbnail, id, editor]);
+
+  useEffect(() => {
+    if (!editor) return;
+
+    const handleUpdate = () => {
+      const html = editor.getHTML();
+      setContent(html);
+    };
+
+    editor.on("update", handleUpdate);
+
+    return () => editor.off("update", handleUpdate);
+  }, [editor]);
 
   useEffect(() => {
     const fetchBlog = async () => {
@@ -286,6 +334,13 @@ const EditBlog = () => {
         </div>
       </div>
 
+      {lastSavedTime && (
+        <div className="text-sm text-gray-500 text-start font-mono mt-1 mb-2">
+          Auto-saved {Math.floor((Date.now() - lastSavedTime.getTime()) / 1000)}{" "}
+          seconds ago
+        </div>
+      )}
+
       <input
         type="text"
         placeholder="Enter Title"
@@ -446,12 +501,6 @@ const EditBlog = () => {
       </div>
 
       <div className="flex gap-4 justify-center mt-8">
-        <button
-          onClick={() => handleUpdateBlog("Draft")}
-          className="px-4 py-2 bg-gray-300 rounded-full text-sm font-medium hover:bg-gray-400"
-        >
-          Save to Draft
-        </button>
         <button
           onClick={() => handleUpdateBlog("Published")}
           className="px-4 py-2 bg-green-400 rounded-full text-sm font-medium hover:bg-green-500"

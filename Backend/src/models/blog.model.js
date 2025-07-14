@@ -4,11 +4,11 @@ const blogSchema = new mongoose.Schema(
   {
     title: {
       type: String,
-      required: true,
+      default: "",
     },
     content: {
       type: String,
-      required: true,
+      default: "",
     },
     tags: {
       type: [String],
@@ -17,7 +17,7 @@ const blogSchema = new mongoose.Schema(
     },
     type: {
       type: String,
-      enum: ["Diary", "Article"],
+      enum: ["Diary", "Article", "Not Set"],
       default: "Not Set",
     },
     status: {

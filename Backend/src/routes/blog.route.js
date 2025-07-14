@@ -9,6 +9,9 @@ import {
   getBlogsByType,
   toggleBlogLike,
   updateBlog,
+  createEmptyDraft,
+  updateDraftById,
+  deleteDraftById
 } from "../controllers/blog.controller.js";
 import verifyToken from "../middlewares/verifyToken.js";
 import isAdmin from "../middlewares/isAdmin.js";
@@ -24,5 +27,10 @@ router.put("/edit/:id", verifyToken, isAdmin, updateBlog);
 router.get("/type/:type", getBlogsByType);
 router.get("/:id", getBlogById);
 router.put("/toggle-like/:id", verifyToken, toggleBlogLike);
+router.post("/draft", verifyToken,createEmptyDraft);
+router.put("/draft/:id",verifyToken, updateDraftById);
+router.delete("/draft/:id",verifyToken, deleteDraftById);
+
+
 
 export default router;
