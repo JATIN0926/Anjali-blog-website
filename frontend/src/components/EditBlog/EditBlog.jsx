@@ -12,6 +12,7 @@ import Loader from "../Loader/Loader";
 import axiosInstance from "../../utils/axiosInstance";
 import { Separator } from "../CreateBlog/Separator";
 import debounce from "lodash.debounce";
+import axios from "axios";
 
 const EditBlog = () => {
   const { id } = useParams();
@@ -149,7 +150,7 @@ const EditBlog = () => {
     formData.append("upload_preset", "blog_preset");
 
     try {
-      const res = await axiosInstance.post(
+      const res = await axios.post(
         `https://api.cloudinary.com/v1_1/${
           import.meta.env.VITE_CLOUDINARY_CLOUD_NAME
         }/upload`,
@@ -182,7 +183,7 @@ const EditBlog = () => {
     formData.append("upload_preset", "blog_preset");
 
     try {
-      const res = await axiosInstance.post(
+      const res = await axios.post(
         `https://api.cloudinary.com/v1_1/${
           import.meta.env.VITE_CLOUDINARY_CLOUD_NAME
         }/upload`,
