@@ -334,13 +334,6 @@ const EditBlog = () => {
         </div>
       </div>
 
-      {lastSavedTime && (
-        <div className="text-sm text-gray-500 text-start font-mono mt-1 mb-2">
-          Auto-saved {Math.floor((Date.now() - lastSavedTime.getTime()) / 1000)}{" "}
-          seconds ago
-        </div>
-      )}
-
       <input
         type="text"
         placeholder="Enter Title"
@@ -454,6 +447,13 @@ const EditBlog = () => {
         >
           Bullet List
         </button>
+        {lastSavedTime && (
+          <div className="text-sm text-gray-500 text-start font-mono mt-1 mb-2">
+            Auto-saved{" "}
+            {Math.floor((Date.now() - lastSavedTime.getTime()) / 1000)} seconds
+            ago
+          </div>
+        )}
       </div>
 
       <EditorContent editor={editor} className="tiptap" />
@@ -503,7 +503,7 @@ const EditBlog = () => {
       <div className="flex gap-4 justify-center mt-8">
         <button
           onClick={() => handleUpdateBlog("Published")}
-          className="px-4 py-2 bg-green-400 rounded-full text-sm font-medium hover:bg-green-500"
+          className="px-4 py-2 w-1/2 cursor-pointer bg-green-400 rounded-full text-sm font-medium hover:bg-green-500"
         >
           Publish
         </button>
