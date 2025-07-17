@@ -16,6 +16,6 @@ export const Separator = Node.create({
   },
 
   renderHTML({ HTMLAttributes }) {
-    return ['div', mergeAttributes(HTMLAttributes, { class: 'separator' }), 0]
+    return ['div', mergeAttributes(HTMLAttributes, { class: 'separator' })]
   },
 })
