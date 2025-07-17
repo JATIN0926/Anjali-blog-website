@@ -251,8 +251,6 @@ const EditBlog = () => {
         },
         { withCredentials: true }
       );
-
-      console.log("res", res.data);
       toast.dismiss();
       toast.success(
         newStatus === "Published" ? "Blog published!" : "Draft saved."

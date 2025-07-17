@@ -151,11 +151,11 @@ export const getBlogsByType = async (req, res) => {
         .json(new ApiError(400, "Type must be 'Article' or 'Diary'"));
     }
 
-    const blogs = await Blog.find({ type }).sort({ createdAt: -1 });
+    const blogs = await Blog.find({ type, status: "Published" }).sort({ createdAt: -1 });
 
     return res
       .status(200)
-      .json(new ApiResponse(200, blogs, `Fetched ${type} blogs successfully`));
+      .json(new ApiResponse(200, blogs, `Fetched published ${type} blogs successfully`));
   } catch (error) {
     console.error("Error fetching blogs by type:", error);
     return res.status(500).json(new ApiError(500, "Server error"));
