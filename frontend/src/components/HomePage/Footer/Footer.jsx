@@ -82,7 +82,7 @@ const Footer = () => {
         });
       }
 
-      if (!user) setEmail(""); // only clear input if guest user
+      if (!user) setEmail("");
       setSocial(false);
       setJournal(false);
     } catch (err) {
@@ -104,7 +104,7 @@ const Footer = () => {
         <div className="w-full flex flex-col items-start gap-3">
           {user ? (
             <p className="w-full border border-[#303130] px-4 py-2 text-[0.9rem] text-[#303130]">
-              Subscribing for <span className="font-medium">{user.email}</span>
+              <span className="font-medium">{user.email}</span>
             </p>
           ) : (
             <input

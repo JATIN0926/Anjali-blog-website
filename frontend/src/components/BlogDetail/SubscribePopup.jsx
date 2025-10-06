@@ -47,7 +47,7 @@ const SubscribePopup = ({ onClose }) => {
           className="w-full border border-[#303130] px-4 py-3 text-[1rem] font-medium"
           style={{ fontFamily: "Inter, sans-serif" }}
         >
-          Subscription for <span className="text-[#0F172A]">{user.email}</span>
+          <span className="text-[#0F172A]">{user.email}</span>
         </p>
 
         <div className="flex items-start justify-center gap-5">
