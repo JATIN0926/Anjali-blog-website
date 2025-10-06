@@ -55,6 +55,8 @@ export const loginWithOneTap = async (req, res) => {
 
     const { createdAt, updatedAt, __v, ...safeUser } = user.toObject();
 
+    safeUser.subscriptions = safeUser.subscriptions || [];
+
     return res.status(200).json(
       new ApiResponse(200, {
         message: "Signed in via One Tap",
@@ -100,6 +102,8 @@ export const loginWithFirebase = async (req, res) => {
     });
 
     const { createdAt, updatedAt, __v, ...safeUser } = user.toObject();
+
+    safeUser.subscriptions = safeUser.subscriptions || [];
 
     return res.status(200).json(
       new ApiResponse(200, {
@@ -167,11 +171,11 @@ export const getCurrentUser = async (req, res) => {
         .json(new ApiError(401, "Unauthorized: User not authenticated"));
     }
 
-    const { _id, name, email, photoURL, uid, isAdmin } = req.user;
+    const { _id, name, email, photoURL, uid, isAdmin , subscriptions = [] } = req.user;
 
     return res.status(200).json(
       new ApiResponse(200, {
-        user: { _id, name, email, photoURL, uid, isAdmin },
+        user: { _id, name, email, photoURL, uid, isAdmin , subscriptions},
       })
     );
   } catch (error) {

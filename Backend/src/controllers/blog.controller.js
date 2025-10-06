@@ -3,6 +3,10 @@ import User from "../models/user.model.js";
 import crypto from "crypto";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
+import { transporter } from "../utils/email.js";
+import { diaryWelcomeMail } from "../email-templates/welcomeDiary.js";
+import { socialWelcomeMail } from "../email-templates/welcomeSocial.js";
+import { bothWelcomeMail } from "../email-templates/welcomeBoth.js";
 
 // @desc    Create new blog
 // @route   POST /api/blogs
@@ -151,11 +155,19 @@ export const getBlogsByType = async (req, res) => {
         .json(new ApiError(400, "Type must be 'Article' or 'Diary'"));
     }
 
-    const blogs = await Blog.find({ type, status: "Published" }).sort({ createdAt: -1 });
+    const blogs = await Blog.find({ type, status: "Published" }).sort({
+      createdAt: -1,
+    });
 
     return res
       .status(200)
-      .json(new ApiResponse(200, blogs, `Fetched published ${type} blogs successfully`));
+      .json(
+        new ApiResponse(
+          200,
+          blogs,
+          `Fetched published ${type} blogs successfully`
+        )
+      );
   } catch (error) {
     console.error("Error fetching blogs by type:", error);
     return res.status(500).json(new ApiError(500, "Server error"));
@@ -320,5 +332,91 @@ export const deleteDraftById = async (req, res) => {
   } catch (error) {
     console.error("Delete Draft Error:", error);
     return res.status(500).json(new ApiError(500, "Server error"));
+  }
+};
+
+export const subscribeUser = async (req, res) => {
+  try {
+    const { email, subscribeTo } = req.body;
+
+    if (!email || !subscribeTo) {
+      throw new ApiError(400, "Email and subscription category required");
+    }
+
+    // Find the user
+    const user = await User.findOne({ email });
+    if (!user) {
+      throw new ApiError(404, "User not found");
+    }
+
+    let alreadySubscribed = true;
+
+    // Check existing subs
+    if (subscribeTo.social && !user.subscriptions.includes("Article")) {
+      alreadySubscribed = false;
+    }
+    if (subscribeTo.diary && !user.subscriptions.includes("Diary")) {
+      alreadySubscribed = false;
+    }
+
+    if (alreadySubscribed) {
+      return res
+        .status(200)
+        .json(
+          new ApiResponse(
+            200,
+            { subscriptions: user.subscriptions },
+            "Already subscribed"
+          )
+        );
+    }
+
+    let updatedSubs = [...user.subscriptions];
+    if (subscribeTo.social && !updatedSubs.includes("Article")) {
+      updatedSubs.push("Article");
+    }
+    if (subscribeTo.diary && !updatedSubs.includes("Diary")) {
+      updatedSubs.push("Diary");
+    }
+    user.subscriptions = updatedSubs;
+    await user.save();
+
+    let mailContent;
+    if (subscribeTo.social && subscribeTo.diary) {
+      mailContent = bothWelcomeMail(user.name);
+    } else if (subscribeTo.social) {
+      mailContent = socialWelcomeMail(user.name);
+    } else if (subscribeTo.diary) {
+      mailContent = diaryWelcomeMail(user.name);
+    }
+
+    if (mailContent) {
+      await transporter.sendMail({
+        from: process.env.SMTP_USER,
+        to: email,
+        subject: mailContent.subject,
+        html: mailContent.html,
+      });
+    }
+
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          { subscriptions: user.subscriptions },
+          "Subscribed successfully"
+        )
+      );
+  } catch (err) {
+    console.error("❌ Subscription failed:", err);
+    return res
+      .status(err.statusCode || 500)
+      .json(
+        new ApiError(
+          err.statusCode || 500,
+          err.message || "Subscription failed"
+        )
+      );
   }
 };

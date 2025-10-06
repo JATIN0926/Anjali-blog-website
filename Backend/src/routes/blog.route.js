@@ -11,7 +11,8 @@ import {
   updateBlog,
   createEmptyDraft,
   updateDraftById,
-  deleteDraftById
+  deleteDraftById,
+  subscribeUser,
 } from "../controllers/blog.controller.js";
 import verifyToken from "../middlewares/verifyToken.js";
 import isAdmin from "../middlewares/isAdmin.js";
@@ -30,6 +31,7 @@ router.put("/toggle-like/:id", verifyToken, toggleBlogLike);
 router.post("/draft", verifyToken,createEmptyDraft);
 router.put("/draft/:id",verifyToken, updateDraftById);
 router.delete("/draft/:id",verifyToken, deleteDraftById);
+router.post("/subscribe", verifyToken, subscribeUser);
 
 
 

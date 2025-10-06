@@ -76,7 +76,7 @@ export const getCommentsByBlogId = async (req, res) => {
   const commentsWithReplies = comments.map((comment) => ({
     ...comment.toObject(),
     replies: replyMap[comment._id.toString()] || [],
-    replyCount: replyMap[comment._id.toString()]?.length || 0, // 👈 new field
+    replyCount: replyMap[comment._id.toString()]?.length || 0,
   }));
 
   res

@@ -55,6 +55,11 @@ const userSchema = new mongoose.Schema(
       unique: true,
       trim: true,
     },
+    subscriptions: {
+      type: [String],
+      enum: ["Article", "Diary"],
+      default: [],
+    },
   },
   {
     timestamps: true,

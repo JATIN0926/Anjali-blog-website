@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { logoutUser, setUser } from "../../../redux/slices/userSlice";
 import { loginWithGoogle } from "../../../utils/loginWithGoogle";
@@ -9,6 +9,10 @@ import axiosInstance from "../../../utils/axiosInstance";
 const Footer = () => {
   const user = useSelector((state) => state.user.currentUser);
   const dispatch = useDispatch();
+
+  const [email, setEmail] = useState("");
+  const [social, setSocial] = useState(false);
+  const [journal, setJournal] = useState(false);
 
   const handleAuthClick = async () => {
     if (user) {
@@ -47,6 +51,49 @@ const Footer = () => {
     }
   };
 
+  const handleSubscribe = async () => {
+    const finalEmail = user ? user.email : email;
+
+    if (!finalEmail) {
+      toast.error("Please enter your email!");
+      return;
+    }
+    if (!social && !journal) {
+      toast.error("Please select at least one category!");
+      return;
+    }
+
+    const loadingToast = toast.loading("Subscribing...");
+
+    try {
+      const res = await axiosInstance.post("/api/blogs/subscribe", {
+        email: finalEmail,
+        subscribeTo: {
+          social,
+          diary: journal,
+        },
+      });
+
+      if (res.data.message === "Already subscribed") {
+        toast.error("You are already subscribed!", { id: loadingToast });
+      } else {
+        toast.success(res.data.message || "Subscribed successfully!", {
+          id: loadingToast,
+        });
+      }
+
+      if (!user) setEmail(""); // only clear input if guest user
+      setSocial(false);
+      setJournal(false);
+    } catch (err) {
+      console.error(err);
+      toast.error(
+        err.response?.data?.message || "Subscription failed. Try again!",
+        { id: loadingToast }
+      );
+    }
+  };
+
   return (
     <div
       className="w-full flex items-start justify-between border-t-[1px] border-t-[#303130] py-4 pb-20"
@@ -55,19 +102,29 @@ const Footer = () => {
       {/* Left Section */}
       <div className="w-[30%] h-[25rem] flex flex-col items-start justify-between gap-4">
         <div className="w-full flex flex-col items-start gap-3">
-          <input
-            type="text"
-            className="email_input w-full  border border-[#303130] px-4 py-3 placeholder:text-[#A6A6A6] placeholder:text-[1rem] placeholder:font-medium"
-            placeholder="Stay in the loop – enter your email"
-            style={{ fontFamily: "Inter, sans-serif" }}
-          />
+          {user ? (
+            <p className="w-full border border-[#303130] px-4 py-2 text-[0.9rem] text-[#303130]">
+              Subscribing for <span className="font-medium">{user.email}</span>
+            </p>
+          ) : (
+            <input
+              type="text"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="email_input w-full border border-[#303130] px-4 py-3 placeholder:text-[#A6A6A6] placeholder:text-[1rem] placeholder:font-medium"
+              placeholder="Stay in the loop – enter your email"
+              style={{ fontFamily: "Inter, sans-serif" }}
+            />
+          )}
+
           <div className="flex items-start justify-center gap-5">
             <div className="flex items-center justify-center gap-2">
               <input
                 type="checkbox"
+                checked={social}
+                onChange={() => setSocial(!social)}
                 className="w-5 h-5 accent-[#0F172A] border border-[#303130] rounded-sm"
               />
-
               <h4 className="text-[#30333B] tracking-[-3%] text-[1.1rem]">
                 Social Pattern
               </h4>
@@ -75,6 +132,8 @@ const Footer = () => {
             <div className="flex items-center justify-center gap-2">
               <input
                 type="checkbox"
+                checked={journal}
+                onChange={() => setJournal(!journal)}
                 className="w-5 h-5 accent-[#0F172A] border border-[#303130] rounded-sm"
               />
               <h4 className="text-[#30333B] tracking-[-3%] text-[1.1rem]">
@@ -82,7 +141,10 @@ const Footer = () => {
               </h4>
             </div>
           </div>
-          <button className="w-full px-8 py-2 bg-[#0F172A] text-white text-[1.2rem] cursor-pointer mt-2">
+          <button
+            onClick={handleSubscribe}
+            className="w-full px-8 py-2 bg-[#0F172A] text-white text-[1.2rem] cursor-pointer mt-2"
+          >
             Subscribe
           </button>
         </div>

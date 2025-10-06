@@ -11,6 +11,7 @@ import axiosInstance from "../../utils/axiosInstance";
 import html2pdf from "html2pdf.js";
 import "./BlogDetail.css";
 import "../CreateBlog/style.css";
+import SubscribePopup from "./SubscribePopup";
 const BlogDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -24,6 +25,7 @@ const BlogDetail = () => {
   const [activeReplyBoxId, setActiveReplyBoxId] = useState(null);
   const [replyText, setReplyText] = useState("");
   const [menuOpenId, setMenuOpenId] = useState(null);
+  const [showSubscribePopup, setShowSubscribePopup] = useState(false);
   const [visibleReplies, setVisibleReplies] = useState({});
   const user = useSelector((state) => state.user.currentUser);
   const hasLiked = user && blog?.likes.includes(user._id);
@@ -64,6 +66,8 @@ const BlogDetail = () => {
     window.addEventListener("click", handleClickOutside);
     return () => window.removeEventListener("click", handleClickOutside);
   }, []);
+
+  console.log(user.subscriptions);
 
   const handleDelete = async () => {
     setShowConfirmModal(false); // Hide modal first
@@ -327,7 +331,28 @@ const BlogDetail = () => {
     }, 100);
   };
 
+  const handleSubscribeClick = async () => {
+    if (!user) {
+      toast("Sign in to subscribe 🔒", { icon: "🔒" });
+
+      try {
+        const signedInUser = await loginWithGoogle(dispatch);
+        dispatch(setUser(signedInUser));
+        toast.success(`Welcome, ${signedInUser.name}!`);
+      } catch (err) {
+        console.error("Google Sign-In failed", err);
+        toast.error("Sign-in failed. Please try again.");
+      }
+
+      return;
+    }
+
+    // If user is logged in, open the subscribe popup
+    setShowSubscribePopup(true);
+  };
+
   if (loading) return <Loader />;
+
 
   if (!blog)
     return (
@@ -346,7 +371,7 @@ const BlogDetail = () => {
         className="w-full flex items-center justify-between mb-10"
         style={{ fontFamily: "SometypeMono Regular, monospace" }}
       >
-        <h1 className="text-[#201F1F] mt-5">Anjali Chaudhary</h1>
+        <h1 className="text-[#201F1F] mt-5 cursor-pointer hover:underline" onClick={()=> navigate('/')}>Anjali Chaudhary</h1>
         <h1
           className="text-[#201F1F] mt-5 cursor-pointer hover:underline"
           onClick={() => navigate("/")}
@@ -375,7 +400,7 @@ const BlogDetail = () => {
               {blog.timeToRead + " "} min read
             </p>
           </div>
-         
+
           <div className="flex items-center justify-center gap-3">
             <p className="text-base text-[#5F5B5B] ">
               {new Date(blog.datePosted).toLocaleDateString("en-US", {
@@ -385,16 +410,30 @@ const BlogDetail = () => {
               })}
             </p>
             {user?.isAdmin ? (
-              <button className=" text-[0.9rem] bg-[#E7E6E6] px-3 py-0.5">
-                Published
-              </button>
-            ) : (
-              <button className=" text-[0.9rem] border border-[#504E4F] px-3 py-0.5">
-                Subscribe
-              </button>
-            )}
+  <button className="text-[0.9rem] bg-[#E7E6E6] px-3 py-0.5">
+    Published
+  </button>
+) : user?.subscriptions?.includes(blog.type) ? (
+  <button
+    disabled
+    className="text-[0.9rem] bg-gray-300 text-gray-600 px-3 py-0.5 cursor-not-allowed"
+  >
+    Subscribed
+  </button>
+) : (
+  <button
+    onClick={handleSubscribeClick}
+    className="cursor-pointer text-[0.9rem] border border-[#504E4F] px-3 py-0.5"
+  >
+    Subscribe
+  </button>
+)}
+
           </div>
         </div>
+        {showSubscribePopup && (
+          <SubscribePopup onClose={() => setShowSubscribePopup(false)} />
+        )}
         <div className="w-full flex items-center justify-between border-y border-y-[#E7EAEE]">
           <div className=" py-2 flex items-center justify-center gap-5">
             <div
