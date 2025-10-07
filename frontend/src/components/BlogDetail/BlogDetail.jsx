@@ -67,8 +67,6 @@ const BlogDetail = () => {
     return () => window.removeEventListener("click", handleClickOutside);
   }, []);
 
-  console.log(user.subscriptions);
-
   const handleDelete = async () => {
     setShowConfirmModal(false); // Hide modal first
     const toastId = toast.loading("Deleting blog...");
