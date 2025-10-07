@@ -32,7 +32,6 @@ const GoogleOneTapLogin = () => {
 
             toast.success("Signed in successfully!", { id: loginToast });
 
-            console.log("User signed in:", res.data);
           } catch (error) {
             toast.error("One Tap Login failed!", { id: loginToast });
             console.error("One Tap Login failed", error);
