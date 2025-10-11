@@ -392,7 +392,7 @@ export const subscribeUser = async (req, res) => {
 
     if (mailContent) {
       await transporter.sendMail({
-        from: process.env.SMTP_USER,
+        from: process.env.EMAIL_FROM,
         to: email,
         subject: mailContent.subject,
         html: mailContent.html,
