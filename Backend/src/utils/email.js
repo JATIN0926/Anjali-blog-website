@@ -1,17 +1,24 @@
-import nodemailer from "nodemailer";
+import * as brevo from "@getbrevo/brevo";
 import dotenv from "dotenv";
 dotenv.config();
 
-export const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  host: "smtp.gmail.com",
-  port: 465,
-  secure: true, 
-  tls: {
-    ciphers: 'SSLv3',
-  },
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
+const apiInstance = new brevo.TransactionalEmailsApi();
+apiInstance.setApiKey(brevo.TransactionalEmailsApiApiKeys.apiKey, process.env.BREVO_API_KEY);
+
+export const sendBrevoMail = async ({ to, subject, html }) => {
+  const sendSmtpEmail = {
+    sender: { email: process.env.EMAIL_FROM, name: "Anjali Blogs" },
+    to: [{ email: to }],
+    subject,
+    htmlContent: html,
+  };
+
+  try {
+    const result = await apiInstance.sendTransacEmail(sendSmtpEmail);
+    console.log("✅ Email sent successfully:");
+    return result;
+  } catch (error) {
+    console.error("❌ Failed to send email:", error);
+    throw error;
+  }
+};

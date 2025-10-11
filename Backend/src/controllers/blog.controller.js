@@ -3,7 +3,7 @@ import User from "../models/user.model.js";
 import crypto from "crypto";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
-import { transporter } from "../utils/email.js";
+import { sendBrevoMail } from "../utils/email.js";
 import { diaryWelcomeMail } from "../email-templates/welcomeDiary.js";
 import { socialWelcomeMail } from "../email-templates/welcomeSocial.js";
 import { bothWelcomeMail } from "../email-templates/welcomeBoth.js";
@@ -391,12 +391,12 @@ export const subscribeUser = async (req, res) => {
     }
 
     if (mailContent) {
-      await transporter.sendMail({
-        from: process.env.EMAIL_FROM,
+      await sendBrevoMail({
         to: email,
         subject: mailContent.subject,
         html: mailContent.html,
       });
+      
     }
 
     return res

@@ -43,7 +43,6 @@ const HomePage = () => {
       .get("/api/users/me")
       .then((res) => {
         dispatch(setUser(res.data.data.user));
-        console.log("User Fetched!");
       })
       .catch((err) => {
         console.log("User not logged in:", err.response?.data || err.message);
