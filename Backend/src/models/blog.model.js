@@ -71,6 +71,8 @@ blogSchema.pre("save", function (next) {
   next();
 });
 
+blogSchema.index({ type: 1, status: 1 , createdAt: -1 });
+
 const Blog = mongoose.model("Blog", blogSchema);
 
 export default Blog;

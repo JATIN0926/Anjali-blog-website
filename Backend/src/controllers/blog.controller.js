@@ -2,6 +2,7 @@ import Blog from "../models/blog.model.js";
 import User from "../models/user.model.js";
 import crypto from "crypto";
 import pLimit from "p-limit";
+import redisClient from "../redis/redisClient.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { sendBrevoMail } from "../utils/email.js";
@@ -57,6 +58,12 @@ export const createBlog = async (req, res) => {
         blog: newBlog,
       })
     );
+
+    if (newBlog.status === "Published") {
+      const keysToDelete = ["blogs_Article", "blogs_Diary"];
+      await redisClient.del(...keysToDelete);
+      console.log("🧹 Redis cache cleared due to new published blog");
+    }
 
     if (newBlog.status === "Published") {
       setImmediate(async () => {
@@ -197,9 +204,34 @@ export const getBlogsByType = async (req, res) => {
         .json(new ApiError(400, "Type must be 'Article' or 'Diary'"));
     }
 
-    const blogs = await Blog.find({ type, status: "Published" }).sort({
-      createdAt: -1,
-    });
+    const cacheKey = `blogs_${type}`;
+
+    const cachedData = await redisClient.get(cacheKey);
+    if (cachedData) {
+      console.log(`✅ Serving ${type} blogs from Redis cache`);
+      return res
+        .status(200)
+        .json(
+          new ApiResponse(
+            200,
+            JSON.parse(cachedData),
+            `Fetched published ${type} blogs (from cache)`
+          )
+        );
+    }
+
+    console.log("Mongo Fetch");
+
+    const blogs = await Blog.find({ type, status: "Published" })
+      .select("title thumbnail datePosted _id")
+      .sort({
+        createdAt: -1,
+      });
+
+    console.log("Mongo Fetch End");
+
+    await redisClient.setEx(cacheKey, 86400, JSON.stringify(blogs));
+    console.log(`🧠 Cached ${type} blogs in Redis`);
 
     return res
       .status(200)
