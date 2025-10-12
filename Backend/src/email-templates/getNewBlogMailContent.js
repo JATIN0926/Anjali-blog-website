@@ -19,6 +19,8 @@ export const getNewBlogMailContent = (blog) => {
           <p>Hi there,</p>
           <p>I just published a new story in <b>Social Pattern</b> — a space where I explore how society quietly shapes the way we think, feel, and behave.</p>
           <p>This piece looks at patterns we rarely question — the ones we live inside every day. It’s honest, reflective, and maybe a bit unsettling.</p>
+          <br/><br/>
+          <p>You can read it here 👇</p>
           <h2 style="margin-top: 30px;">${title}</h2>
           <p>${previewText}...</p>
           <a href="${blogUrl}" target="_blank" style="display: inline-block; margin-top: 20px; padding: 10px 18px; background: #000; color: #fff; text-decoration: none; border-radius: 4px;">Read more →</a>
@@ -35,7 +37,9 @@ export const getNewBlogMailContent = (blog) => {
         <div style="font-family: 'Inter', sans-serif; color: #222; line-height: 1.6; padding: 20px; max-width: 600px; margin: auto;">
           <p>Hey,</p>
           <p>I’ve shared something new in <b>My Diary</b> — a space where I write without filters. These entries aren’t lessons or essays, just moments I want to remember.</p>
+          <br/><br/>
           <p>This one’s a little messy, a little unsure, but deeply mine.</p>
+          <p>You can read it here 👇</p>
           <h2 style="margin-top: 30px;">${title}</h2>
           <p>${previewText}...</p>
           <a href="${blogUrl}" target="_blank" style="display: inline-block; margin-top: 20px; padding: 10px 18px; background: #000; color: #fff; text-decoration: none; border-radius: 4px;">Open My Diary →</a>
