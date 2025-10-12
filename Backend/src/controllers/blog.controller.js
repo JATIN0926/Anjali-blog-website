@@ -1,15 +1,15 @@
 import Blog from "../models/blog.model.js";
 import User from "../models/user.model.js";
 import crypto from "crypto";
+import pLimit from "p-limit";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { sendBrevoMail } from "../utils/email.js";
 import { diaryWelcomeMail } from "../email-templates/welcomeDiary.js";
 import { socialWelcomeMail } from "../email-templates/welcomeSocial.js";
 import { bothWelcomeMail } from "../email-templates/welcomeBoth.js";
+import { getNewBlogMailContent } from "../email-templates/getNewBlogMailContent.js";
 
-// @desc    Create new blog
-// @route   POST /api/blogs
 export const createBlog = async (req, res) => {
   try {
     const { title, content, tags, type, uid, thumbnail, status } = req.body;
@@ -51,15 +51,57 @@ export const createBlog = async (req, res) => {
       await lastDiary.save();
     }
 
-    return res.status(201).json(
+    res.status(201).json(
       new ApiResponse(201, {
         message: "Blog created successfully",
         blog: newBlog,
       })
     );
+
+    if (newBlog.status === "Published") {
+      setImmediate(async () => {
+        try {
+          const subscribers = await User.find({
+            $or: [
+              { subscriptions: type },
+              { subscriptions: { $all: ["Article", "Diary"] } },
+            ],
+          }).select("email");
+
+          if (!subscribers.length) return;
+
+          console.log(
+            `📨 Sending new blog notification to ${subscribers.length} users`
+          );
+
+          const mailContent = getNewBlogMailContent(newBlog);
+
+          const limit = pLimit(5);
+
+          const tasks = subscribers.map((subUser) =>
+            limit(() =>
+              sendBrevoMail({
+                to: subUser.email,
+                subject: mailContent.subject,
+                html: mailContent.html,
+              }).catch((err) =>
+                console.error(
+                  `❌ Failed to send mail to ${subUser.email}: ${err.message}`
+                )
+              )
+            )
+          );
+
+          await Promise.allSettled(tasks);
+          console.log("✅ All subscriber emails processed");
+        } catch (err) {
+          console.error("❌ Background mail task failed:", err);
+        }
+      });
+    }
   } catch (error) {
     console.error("Error creating blog:", error);
-    return res.status(500).json(new ApiError(500, "Server error"));
+    return res.status(500).json(new ApiError(500, "Failed to Post Blog"));
   }
 };
 
@@ -343,60 +385,60 @@ export const subscribeUser = async (req, res) => {
       throw new ApiError(400, "Email and subscription category required");
     }
 
-    // Find the user
     const user = await User.findOne({ email });
     if (!user) {
       throw new ApiError(404, "User not found");
     }
 
-    let alreadySubscribed = true;
+    let updatedSubs = [...user.subscriptions];
+    let newlyAdded = [];
 
-    // Check existing subs
-    if (subscribeTo.social && !user.subscriptions.includes("Article")) {
-      alreadySubscribed = false;
-    }
-    if (subscribeTo.diary && !user.subscriptions.includes("Diary")) {
-      alreadySubscribed = false;
+    // Handle "Article" (social)
+    if (subscribeTo.social && !updatedSubs.includes("Article")) {
+      updatedSubs.push("Article");
+      newlyAdded.push("Article");
     }
 
-    if (alreadySubscribed) {
+    // Handle "Diary"
+    if (subscribeTo.diary && !updatedSubs.includes("Diary")) {
+      updatedSubs.push("Diary");
+      newlyAdded.push("Diary");
+    }
+
+    // If nothing new added → user was already subscribed to all requested types
+    if (newlyAdded.length === 0) {
       return res
         .status(200)
         .json(
           new ApiResponse(
             200,
             { subscriptions: user.subscriptions },
-            "Already subscribed"
+            "Already subscribed to selected categories"
           )
         );
     }
 
-    let updatedSubs = [...user.subscriptions];
-    if (subscribeTo.social && !updatedSubs.includes("Article")) {
-      updatedSubs.push("Article");
-    }
-    if (subscribeTo.diary && !updatedSubs.includes("Diary")) {
-      updatedSubs.push("Diary");
-    }
+    // Save only if there's an update
     user.subscriptions = updatedSubs;
     await user.save();
 
+    // Choose correct welcome mail
     let mailContent;
-    if (subscribeTo.social && subscribeTo.diary) {
+    if (newlyAdded.includes("Article") && newlyAdded.includes("Diary")) {
       mailContent = bothWelcomeMail(user.name);
-    } else if (subscribeTo.social) {
+    } else if (newlyAdded.includes("Article")) {
       mailContent = socialWelcomeMail(user.name);
-    } else if (subscribeTo.diary) {
+    } else if (newlyAdded.includes("Diary")) {
       mailContent = diaryWelcomeMail(user.name);
     }
 
+    // Send welcome mail (non-blocking optional)
     if (mailContent) {
       await sendBrevoMail({
         to: email,
         subject: mailContent.subject,
         html: mailContent.html,
       });
-      
     }
 
     return res
