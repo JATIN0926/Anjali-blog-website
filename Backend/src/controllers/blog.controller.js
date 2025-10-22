@@ -158,6 +158,15 @@ export const deleteBlog = async (req, res) => {
         .json({ success: false, message: "Blog not found" });
     }
 
+    const cacheKey = `blogs_${deletedBlog.type}`;
+    try {
+      const result = await redisClient.del(cacheKey);
+      console.log(`🧹 Redis cache cleared for ${cacheKey} (deleted blog):`, result);
+    } catch (err) {
+      console.error(`❌ Failed to clear Redis cache for ${cacheKey}:`, err);
+    }
+
+
     res
       .status(200)
       .json({ success: true, message: "Blog deleted successfully" });
