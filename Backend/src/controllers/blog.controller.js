@@ -60,15 +60,16 @@ export const createBlog = async (req, res) => {
     );
 
     if (newBlog.status === "Published") {
-      const keysToDelete = ["blogs_Article", "blogs_Diary"];
-      console.log("Clearing Redis due to new blog creation!")
-      for (const key of keysToDelete) {
-        try {
-          const result = await redisClient.del(key);
-          console.log(`Deleted key ${key}:`, result); // 1 if deleted, 0 if not
-        } catch (err) {
-          console.error(`Failed to delete key ${key}:`, err);
-        }
+      const cacheKey = `blogs_${newBlog.type}`;
+      console.log(
+        `🧹 Clearing Redis cache for ${cacheKey} due to new blog creation!`
+      );
+
+      try {
+        const result = await redisClient.del(cacheKey);
+        console.log(`Deleted key ${cacheKey}:`, result); // 1 if deleted, 0 if not
+      } catch (err) {
+        console.error(`Failed to delete key ${cacheKey}:`, err);
       }
     }
 
