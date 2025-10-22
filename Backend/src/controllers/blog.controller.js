@@ -60,7 +60,7 @@ export const createBlog = async (req, res) => {
     );
 
     if (newBlog.status === "Published") {
-      const keysToDelete = ["blogs_Article", "blogs_Diary"];
+      const keysToDelete = ['blogs_Article', 'blogs_Diary'];
       await redisClient.del(...keysToDelete);
       console.log("🧹 Redis cache cleared due to new published blog");
     }
@@ -186,7 +186,7 @@ export const updateBlog = async (req, res, next) => {
 
     const updatedBlog = await blog.save();
 
-    const keysToDelete = ["blogs_Article", "blogs_Diary"];
+    const keysToDelete = ['blogs_Article', 'blogs_Diary'];
     await redisClient.del(...keysToDelete);
     console.log("🧹 Redis cache cleared due to blog update");
 
