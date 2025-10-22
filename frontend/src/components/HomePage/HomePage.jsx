@@ -26,6 +26,7 @@ const HomePage = () => {
         const type = activeTab === "social" ? "Article" : "Diary";
         const res = await axiosInstance.get(`/api/blogs/type/${type}`);
 
+
         setBlogs(res.data.data);
       } catch (err) {
         console.error("Failed to fetch blogs:", err);

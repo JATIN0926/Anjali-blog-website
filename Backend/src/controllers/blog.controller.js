@@ -186,6 +186,10 @@ export const updateBlog = async (req, res, next) => {
 
     const updatedBlog = await blog.save();
 
+    const keysToDelete = ["blogs_Article", "blogs_Diary"];
+    await redisClient.del(...keysToDelete);
+    console.log("🧹 Redis cache cleared due to blog update");
+
     return res
       .status(200)
       .json(new ApiResponse(200, updatedBlog, "Blog updated successfully"));
@@ -492,5 +496,56 @@ export const subscribeUser = async (req, res) => {
           err.message || "Subscription failed"
         )
       );
+  }
+};
+
+export const getRecommendedBlogs = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const page = parseInt(req.query.page) || 1;
+    const limit = 6;
+
+    const currentBlog = await Blog.findById(id).select("type tags status");
+    if (!currentBlog)
+      return res.status(404).json(new ApiError(404, "Blog not found"));
+
+    const matchQuery = {
+      _id: { $ne: currentBlog._id },
+      type: currentBlog.type,
+      status: "Published",
+    };
+
+    if (currentBlog.tags.length > 0) {
+      matchQuery.tags = { $in: currentBlog.tags };
+    }
+
+    const totalSameType = await Blog.countDocuments({
+      type: currentBlog.type,
+      status: "Published",
+    });
+
+    if (totalSameType < 5)
+      return res
+        .status(200)
+        .json(new ApiResponse(200, [], "Not enough blogs for recommendations"));
+
+    const allRecommendations = await Blog.find(matchQuery)
+      .sort({ createdAt: -1 })
+      .select("title thumbnail datePosted _id");
+
+    const total = allRecommendations.length;
+    const startIdx = ((page - 1) * limit) % total;
+
+    const recommendations = [];
+    for (let i = 0; i < limit; i++) {
+      recommendations.push(allRecommendations[(startIdx + i) % total]);
+    }
+
+    return res
+      .status(200)
+      .json(new ApiResponse(200, recommendations, "Fetched recommended blogs"));
+  } catch (error) {
+    console.error("Error fetching recommended blogs:", error);
+    return res.status(500).json(new ApiError(500, "Server error"));
   }
 };

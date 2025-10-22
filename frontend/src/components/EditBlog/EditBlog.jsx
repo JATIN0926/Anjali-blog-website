@@ -239,6 +239,8 @@ const EditBlog = () => {
     try {
       toast.loading("Updating...");
 
+      console.log("type", type);
+
       const res = await axiosInstance.put(
         `/api/blogs/edit/${id}`,
         {

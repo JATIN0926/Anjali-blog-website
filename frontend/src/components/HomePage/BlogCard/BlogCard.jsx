@@ -1,10 +1,16 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
-const BlogCard = ({ date, heading, imgSrc , id }) => {
+const BlogCard = ({ date, heading, imgSrc, id , variant = "default" }) => {
   const navigate = useNavigate();
+
+  const containerClass =
+    variant === "no-border"
+      ? "w-full p-4 flex items-center justify-between gap-6"
+      : "w-full border-t border-t-[#303130] p-4 flex items-center justify-between gap-6";
+
   return (
-    <div className="w-full border-t border-t-[#303130] p-4 flex items-center justify-between gap-6">
+    <div className={containerClass}>
       {/* Left content */}
       <div className="flex flex-col items-start justify-center gap-2 w-[65%]">
         <p

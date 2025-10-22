@@ -13,6 +13,7 @@ import {
   updateDraftById,
   deleteDraftById,
   subscribeUser,
+  getRecommendedBlogs,
 } from "../controllers/blog.controller.js";
 import verifyToken from "../middlewares/verifyToken.js";
 import isAdmin from "../middlewares/isAdmin.js";
@@ -28,11 +29,10 @@ router.put("/edit/:id", verifyToken, isAdmin, updateBlog);
 router.get("/type/:type", getBlogsByType);
 router.get("/:id", getBlogById);
 router.put("/toggle-like/:id", verifyToken, toggleBlogLike);
-router.post("/draft", verifyToken,createEmptyDraft);
-router.put("/draft/:id",verifyToken, updateDraftById);
-router.delete("/draft/:id",verifyToken, deleteDraftById);
+router.post("/draft", verifyToken, createEmptyDraft);
+router.put("/draft/:id", verifyToken, updateDraftById);
+router.delete("/draft/:id", verifyToken, deleteDraftById);
 router.post("/subscribe", verifyToken, subscribeUser);
-
-
+router.get("/:id/recommendations", getRecommendedBlogs);
 
 export default router;

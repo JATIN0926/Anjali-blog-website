@@ -12,6 +12,7 @@ import html2pdf from "html2pdf.js";
 import "./BlogDetail.css";
 import "../CreateBlog/style.css";
 import SubscribePopup from "./SubscribePopup";
+import Recommendations from "./Recommendations";
 const BlogDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -351,15 +352,36 @@ const BlogDetail = () => {
 
   if (loading) return <Loader />;
 
-
   if (!blog)
     return (
-      <p
-        className="text-center text-4xl text-[#201F1F] mt-10"
-        style={{ fontFamily: "ScheherazadeNew Regular, monospace" }}
-      >
-        Blog not found.
-      </p>
+      <div className="w-full h-full flex flex-col items-center justify-center px-6 py-20">
+        <h2
+          className="text-5xl font-bold mb-4 text-[#FF6B6B]"
+          style={{ fontFamily: "ScheherazadeNew Regular, monospace" }}
+        >
+          😕 404
+        </h2>
+        <p
+          className="text-center text-xl text-[#201F1F] mb-2"
+          style={{ fontFamily: "SometypeMono Regular, monospace" }}
+        >
+          Looks like this blog wandered off!
+        </p>
+        <p
+          className="text-center text-[#6F6B6B] mb-6"
+          style={{ fontFamily: "SometypeMono Regular, monospace" }}
+        >
+          Don’t worry, we have plenty more blogs for you. Explore them on the
+          homepage!
+        </p>
+        <button
+          onClick={() => navigate("/")}
+          className="bg-[#201F1F] hover:bg-[#333] text-white px-6 py-3 rounded-md cursor-pointer"
+          style={{ fontFamily: "SometypeMono Regular, monospace" }}
+        >
+          Return Home
+        </button>
+      </div>
     );
 
   return (
@@ -369,7 +391,12 @@ const BlogDetail = () => {
         className="w-full flex items-center justify-between mb-10"
         style={{ fontFamily: "SometypeMono Regular, monospace" }}
       >
-        <h1 className="text-[#201F1F] mt-5 cursor-pointer hover:underline" onClick={()=> navigate('/')}>Anjali Chaudhary</h1>
+        <h1
+          className="text-[#201F1F] mt-5 cursor-pointer hover:underline"
+          onClick={() => navigate("/")}
+        >
+          Anjali Chaudhary
+        </h1>
         <h1
           className="text-[#201F1F] mt-5 cursor-pointer hover:underline"
           onClick={() => navigate("/")}
@@ -408,25 +435,24 @@ const BlogDetail = () => {
               })}
             </p>
             {user?.isAdmin ? (
-  <button className="text-[0.9rem] bg-[#E7E6E6] px-3 py-0.5">
-    Published
-  </button>
-) : user?.subscriptions?.includes(blog.type) ? (
-  <button
-    disabled
-    className="text-[0.9rem] bg-gray-300 text-gray-600 px-3 py-0.5 cursor-not-allowed"
-  >
-    Subscribed
-  </button>
-) : (
-  <button
-    onClick={handleSubscribeClick}
-    className="cursor-pointer text-[0.9rem] border border-[#504E4F] px-3 py-0.5"
-  >
-    Subscribe
-  </button>
-)}
-
+              <button className="text-[0.9rem] bg-[#E7E6E6] px-3 py-0.5">
+                Published
+              </button>
+            ) : user?.subscriptions?.includes(blog.type) ? (
+              <button
+                disabled
+                className="text-[0.9rem] bg-gray-300 text-gray-600 px-3 py-0.5 cursor-not-allowed"
+              >
+                Subscribed
+              </button>
+            ) : (
+              <button
+                onClick={handleSubscribeClick}
+                className="cursor-pointer text-[0.9rem] border border-[#504E4F] px-3 py-0.5"
+              >
+                Subscribe
+              </button>
+            )}
           </div>
         </div>
         {showSubscribePopup && (
@@ -1015,6 +1041,8 @@ const BlogDetail = () => {
           </div>
         </div>
       )}
+
+      <Recommendations blogId={blog._id} />
 
       <Footer />
     </div>
