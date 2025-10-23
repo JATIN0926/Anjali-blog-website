@@ -4,6 +4,7 @@ import toast from "react-hot-toast";
 import "./ViewStories.css";
 import PlanCard from "./PlanCard/PlanCard";
 import axiosInstance from "../../utils/axiosInstance";
+import { useNavigate } from "react-router-dom";
 const ViewStories = () => {
   const [activeTab, setActiveTab] = useState("Diary");
   const [blogStatus, setBlogStatus] = useState("Published");
@@ -12,6 +13,7 @@ const ViewStories = () => {
   const [editingPlanId, setEditingPlanId] = useState(null);
   const [blogs, setBlogs] = useState([]);
   const [plans, setPlans] = useState([]);
+  const navigate = useNavigate();
 
   // Add New Plan
   const handleAddPlan = async () => {
@@ -94,7 +96,7 @@ const ViewStories = () => {
         className="w-full flex items-center justify-between mt-4"
         style={{ fontFamily: "SometypeMono Regular, monospace" }}
       >
-        <h1 className="text-[#201F1F]">Anjali Chaudhary</h1>
+        <h1 className="text-[#201F1F] hover:underline cursor-pointer" onClick={()=>navigate('/')}>Anjali Chaudhary</h1>
         <img
           src="/icons/notification.svg"
           alt="Notification"

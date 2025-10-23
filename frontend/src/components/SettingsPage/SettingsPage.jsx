@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import toast from "react-hot-toast";
 import { setUser } from "../../redux/slices/userSlice";
 import axiosInstance from "../../utils/axiosInstance";
+import { useNavigate } from "react-router-dom";
 
 const SettingsPage = () => {
   const user = useSelector((state) => state.user.currentUser);
@@ -18,6 +19,8 @@ const SettingsPage = () => {
   const [activeTab, setActiveTab] = useState("contacts");
 
   const [notifications, setNotifications] = useState([]);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchNotifications = async () => {
@@ -95,7 +98,12 @@ const SettingsPage = () => {
         className="w-full flex items-center justify-between mt-4"
         style={{ fontFamily: "SometypeMono Regular, monospace" }}
       >
-        <h1 className="text-[#201F1F]">Anjali Chaudhary</h1>
+        <h1
+          className="text-[#201F1F] hover:underline cursor-pointer"
+          onClick={() => navigate("/")}
+        >
+          Anjali Chaudhary
+        </h1>
       </div>
 
       <div className="w-[60%] justify-self-center pt-16 flex flex-col gap-16">

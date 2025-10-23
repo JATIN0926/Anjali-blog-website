@@ -20,6 +20,7 @@ import axiosInstance from "../../utils/axiosInstance.js";
 import axios from "axios";
 import { Separator } from "./Separator.js";
 import debounce from "lodash.debounce";
+import { useNavigate } from "react-router-dom";
 
 const CreateBlog = () => {
   const fileInputRef = useRef();
@@ -81,6 +82,7 @@ const CreateBlog = () => {
   const [tags, setLocalTags] = useState(storedTags || []);
   const [currentTag, setCurrentTag] = useState("");
   const [showInput, setShowInput] = useState(false);
+  const navigate = useNavigate();
   const draftId = useSelector((state) => state.blogDraft.draftId);
 
   useEffect(() => {
@@ -426,7 +428,12 @@ const CreateBlog = () => {
         className="w-full flex items-center justify-between"
         style={{ fontFamily: "SometypeMono Regular, monospace" }}
       >
-        <h1 className="text-[#201F1F]">Anjali Chaudhary</h1>
+        <h1
+          className="text-[#201F1F] hover:underline cursor-pointer"
+          onClick={() => navigate("/")}
+        >
+          Anjali Chaudhary
+        </h1>
         <div className="relative inline-block text-left" ref={dropdownRef}>
           <button
             className="flex items-center gap-2 text-[#201F1F] font-medium cursor-pointer border border-[#504E4F] px-4 py-2"
