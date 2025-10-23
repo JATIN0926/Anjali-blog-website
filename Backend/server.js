@@ -37,6 +37,10 @@ app.use("/api/plans", planRoutes);
 app.use("/api/comments", commentRoutes);
 app.use("/api/notifications", notificationRoutes);
 
+app.get("/api/status", (req, res) => {
+  res.status(200).json({ success: true, message: "Server is alive!" });
+});
+
 const PORT = process.env.PORT || 5000;
 
 connectDB()
