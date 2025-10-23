@@ -38,8 +38,10 @@ app.use("/api/comments", commentRoutes);
 app.use("/api/notifications", notificationRoutes);
 
 app.get("/api/status", (req, res) => {
+  console.log(`🟢 Ping received at: ${new Date().toLocaleTimeString()}`);
   res.status(200).json({ success: true, message: "Server is alive!" });
 });
+
 
 const PORT = process.env.PORT || 5000;
 
