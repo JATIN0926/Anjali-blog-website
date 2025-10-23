@@ -239,8 +239,6 @@ const EditBlog = () => {
     try {
       toast.loading("Updating...");
 
-      console.log("type", type);
-
       const res = await axiosInstance.put(
         `/api/blogs/edit/${id}`,
         {
@@ -502,6 +500,15 @@ const EditBlog = () => {
       </div>
 
       <div className="flex gap-4 justify-center mt-8">
+        {/* Save as Draft Button */}
+        <button
+          onClick={() => handleUpdateBlog("Draft")}
+          className="px-4 py-2 w-1/2 cursor-pointer bg-yellow-300 rounded-full text-sm font-medium hover:bg-yellow-400"
+        >
+          Save as Draft
+        </button>
+
+        {/* Publish Button */}
         <button
           onClick={() => handleUpdateBlog("Published")}
           className="px-4 py-2 w-1/2 cursor-pointer bg-green-400 rounded-full text-sm font-medium hover:bg-green-500"
