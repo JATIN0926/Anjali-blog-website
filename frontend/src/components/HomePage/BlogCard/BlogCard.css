@@ -1,0 +1,72 @@
+
+@media (max-width: 399px) {
+    .date {
+        font-size: 0.5rem;
+      }
+      .heading {
+        font-size: 1rem;
+        line-height: 1.25rem;
+      }
+      .btn{
+          margin-top: 1rem;
+          font-size: 0.5rem;
+      }
+      .blog_card{
+        gap: 1rem;
+        padding-inline: 0rem;
+      }
+  }
+@media (min-width: 400px) {
+    .date {
+        font-size: 0.7rem;
+      }
+      .heading {
+        font-size: 1.3rem;
+        line-height: 1.5rem;
+      }
+      .btn{
+          margin-top: 1rem;
+          font-size: 0.7rem;
+      }
+      .blog_card{
+        gap: 1.5rem;
+      }
+  }
+@media (min-width: 600px) {
+    .date {
+        font-size: 0.6rem;
+      }
+      .heading {
+        font-size: 1.6rem;
+        line-height: 2rem;
+      }
+      .btn{
+          margin-top: 1rem;
+          font-size: 0.65rem;
+      }
+  }
+  
+@media (min-width: 800px) {
+    .date {
+      font-size: 0.6rem;
+    }
+    .heading {
+      font-size: 1.6rem;
+    }
+    .btn{
+        margin-top: 1rem;
+        font-size: 0.65rem;
+    }
+  }
+@media (min-width: 1000px) {
+    .date {
+      font-size: 0.75rem;
+    }
+    .heading {
+      font-size: 2rem;
+    }
+    .btn{
+        margin-top: 1.5rem;
+        font-size: 0.75rem;
+    }
+  }

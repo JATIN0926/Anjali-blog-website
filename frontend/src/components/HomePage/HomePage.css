@@ -31,4 +31,258 @@
   .settings-icon-wrapper:hover {
     opacity: 0.5;
   }
+
+  .hero-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+
+
+
+  
+  
+/* 📱 Very Small Screens (0–399px) */
+@media (max-width: 399px) {
+  .hero-container-mobile {
+    text-align: left;
+    gap: 2rem;
+  }
+
+  .hero-container-mobile h1 {
+    align-self: flex-start;
+    text-align: left;
+  }
+
+  .main-text-mobile {
+    font-size: 1.5rem;
+    line-height: 1.9rem;
+    width: 110%;
+  }
+
+  .blog_heading {
+    font-size: 1.2rem;
+    line-height: 1.4rem;
+  }
+
+  .admin-buttons-mobile button {
+    font-size: 0.7rem;
+  }
+  .admin-buttons-mobile{
+    margin-top: 2rem;
+  }
+  .social_pattern{
+    font-size: 0.7rem;
+    padding-inline: 1rem;
+  }
+  .my_diary{
+    font-size: 0.7rem;
+    padding-inline: 1rem;
+  }
+  .blogs_container{
+    gap: 2rem;
+  }
+  .see_more_btn{
+    font-size: 0.7rem;
+    padding-inline: 1.1rem;
+    padding-block: 0.35rem;
+  }
+  .blog_parent_container{
+    margin-top: 4rem;
+  }
+}
+
+@media (min-width: 400px) and (max-width: 599px) {
+  .hero-container-mobile {
+    text-align: left;
+    gap: 3rem;
+  }
+
+  .hero-container-mobile h1 {
+    align-self: flex-start;
+    text-align: left;
+  }
+
+  .main-text-mobile {
+    font-size: 2rem;
+    line-height: 2.2rem;
+    width: 95%;
+  }
+
+  .blog_heading {
+    font-size: 1.5rem;
+    line-height: 1.75rem;
+  }
+
+  .admin-buttons-mobile button {
+    font-size: 1rem;
+  }
+  .admin-buttons-mobile{
+    margin-top: 5rem;
+  }
+  .social_pattern{
+    font-size: 1rem;
+    padding-inline: 1rem;
+  }
+  .my_diary{
+    font-size: 1rem;
+    padding-inline: 1rem;
+  }
+  .blogs_container{
+    gap: 2rem;
+  }
+  .see_more_btn{
+    font-size: 0.7rem;
+    padding-inline: 1.1rem;
+    padding-block: 0.35rem;
+  }
+  .blog_parent_container{
+    margin-top: 6rem;
+  }
+}
+@media (min-width: 600px) and (max-width: 799px) {
+  .hero-container-mobile {
+    text-align: left;
+    gap: 3rem;
+  }
+
+  .hero-container-mobile h1 {
+    align-self: flex-start;
+    text-align: left;
+  }
+
+  .main-text-mobile {
+    font-size: 2rem;
+    line-height: 2.2rem;
+    width: 95%;
+  }
+
+  .blog_heading {
+    font-size: 1.5rem;
+    line-height: 1.75rem;
+  }
+
+  .admin-buttons-mobile button {
+    font-size: 1rem;
+  }
+  .admin-buttons-mobile{
+    margin-top: 5rem;
+  }
+  .social_pattern{
+    font-size: 0.9rem;
+  }
+  .my_diary{
+    font-size: 0.9rem;
+  }
+  .custom-scrollbar{
+    height: 26rem;
+  }
+  .blogs_container{
+    gap: 2.5rem;
+  }
+  .blog_parent_container{
+    margin-top: 6rem;
+  }
+}
+
+  
+
+  @media (min-width: 800px) {
+    .main-text {
+      font-size: 1.7rem;
+      line-height: 2rem;
+    }
+    .main-image{
+      margin-bottom: 4rem;
+    }
+    .view-stories{
+      font-size: 0.9rem;
+    }
+    .write-article{
+      font-size: 0.9rem;
+    }
+    .hero-container{
+      height: 30rem;
+      gap: 1.5rem;
+    }
+    .blog_heading{
+      font-size: 1.4rem;
+      line-height: 1.75rem;
+    }
+    .blogs_container{
+      width: 58%;
+    }
+    .social_pattern{
+      font-size: 0.9rem;
+    }
+    .my_diary{
+      font-size: 0.9rem;
+    }
+    .custom-scrollbar{
+      height: 30rem;
+    }
+    .admin-buttons-mobile{
+      margin-top: 0rem;
+    }
+  }
+  @media (min-width: 1000px) {
+    .main-text {
+      font-size: 2.3rem;
+      line-height: 2.5rem;
+    }
+    .main-image{
+      margin-bottom: 4rem;
+    }
+    .view-stories{
+      font-size: 1.1rem;
+    }
+    .write-article{
+      font-size: 1.1rem;
+    }
+    .hero-container{
+      height: 40rem;
+    }
+    .blog_heading{
+      font-size: 1.7rem;
+    }
+    .blogs_container{
+      width: 52%;
+    }
+    .social_pattern{
+      font-size: 1.1rem;
+    }
+    .my_diary{
+      font-size: 1.1rem;
+    }
+    .custom-scrollbar{
+      height: 40rem;
+    }
+
+  }
+  
+  @media (min-width: 1200px) {
+    .main-text {
+      font-size: 2.7rem;
+      line-height: 2.5rem;
+    }
+    .main-image{
+      margin-bottom: 4rem;
+    }
+    .view-stories{
+      font-size: 1.1rem;
+    }
+    .write-article{
+      font-size: 1.1rem;
+    }
+
+    .hero-container{
+      height: 40rem;
+    }
+    .blog_heading{
+      font-size: 2rem;
+    }
+  }
+  
   

@@ -5,6 +5,7 @@ import { loginWithGoogle } from "../../../utils/loginWithGoogle";
 import toast from "react-hot-toast";
 import { setShowFallbackPopup } from "../../../redux/slices/authUiSlice";
 import axiosInstance from "../../../utils/axiosInstance";
+import "./Footer.css";
 
 const Footer = () => {
   const user = useSelector((state) => state.user.currentUser);
@@ -96,11 +97,11 @@ const Footer = () => {
 
   return (
     <div
-      className="w-full flex items-start justify-between border-t-[1px] border-t-[#303130] py-4 pb-20"
+      className="w-full border-t-[1px] border-t-[#303130] py-4 pb-6 mt-16 main_container"
       style={{ fontFamily: "SometypeMono Regular, monospace" }}
     >
       {/* Left Section */}
-      <div className="w-[30%] h-[25rem] flex flex-col items-start justify-between gap-4">
+      <div className="w-[30%] h-[25rem] flex flex-col items-start justify-between gap-4 left">
         <div className="w-full flex flex-col items-start gap-3">
           {user ? (
             <p className="w-full border border-[#303130] px-4 py-2 text-[0.9rem] text-[#303130]">
@@ -117,7 +118,7 @@ const Footer = () => {
             />
           )}
 
-          <div className="flex items-start justify-center gap-5">
+          <div className="flex items-start justify-center gap-5 checkbox_container">
             <div className="flex items-center justify-center gap-2">
               <input
                 type="checkbox"
@@ -125,7 +126,7 @@ const Footer = () => {
                 onChange={() => setSocial(!social)}
                 className="w-5 h-5 accent-[#0F172A] border border-[#303130] rounded-sm"
               />
-              <h4 className="text-[#30333B] tracking-[-3%] text-[1.1rem]">
+              <h4 className="text-[#30333B] tracking-[-3%] text-[1.1rem] social_pattern_footer">
                 Social Pattern
               </h4>
             </div>
@@ -136,28 +137,28 @@ const Footer = () => {
                 onChange={() => setJournal(!journal)}
                 className="w-5 h-5 accent-[#0F172A] border border-[#303130] rounded-sm"
               />
-              <h4 className="text-[#30333B] tracking-[-3%] text-[1.1rem]">
+              <h4 className="text-[#30333B] tracking-[-3%] text-[1.1rem] my_journal_footer">
                 My Journal
               </h4>
             </div>
           </div>
           <button
             onClick={handleSubscribe}
-            className="w-full px-8 py-2 bg-[#0F172A] text-white text-[1.2rem] cursor-pointer mt-2"
+            className="w-full px-8 py-2 bg-[#0F172A] text-white text-[1.2rem] cursor-pointer mt-2 subscribe"
           >
             Subscribe
           </button>
         </div>
-        <div className="flex flex-col items-start ">
+        <div className="flex flex-col items-start copyright-desktop ">
           <p className="text-[0.75rem] text-[#201F1F]">Anjali Chaudhary</p>
           <p className="text-[0.75rem] text-[#201F1F]">Copyright © 2025</p>
         </div>
       </div>
 
       {/* Image Section */}
-      <div className="w-[30%] flex gap-4 h-[10.5rem]">
+      <div className="w-[30%] flex gap-4 h-[10.5rem] right">
         <div className=" h-full flex flex-col items-center justify-between">
-          <div className="flex flex-col gap-1">
+          <div className="flex flex-col gap-1 links_container">
             <a
               href={user?.twitter}
               target="_blank"
@@ -192,27 +193,32 @@ const Footer = () => {
 
           {user ? (
             <button
-              className="bg-[#DEDEDE] px-4 py-2 rounded-xl text-[0.9rem] cursor-pointer"
+              className="bg-[#DEDEDE] px-4 py-2 rounded-xl text-[0.9rem] cursor-pointer signout"
               onClick={handleAuthClick}
             >
               Signout
             </button>
           ) : (
             <button
-              className="bg-[#DEDEDE] px-4 py-2 rounded-xl text-[0.9rem] cursor-pointer"
+              className="bg-[#DEDEDE] px-4 py-2 rounded-xl text-[0.9rem] cursor-pointer signin"
               onClick={handleAuthClick}
             >
               Sign in
             </button>
           )}
         </div>
-        <div className="w-[70%] h-full self-start">
+        <div className="w-[70%] h-full self-start right_img">
           <img
             src="/images/footer_img.png"
             alt=""
-            className="w-full h-full object-cover rounded-md"
+            className="w-full h-full object-cover"
           />
         </div>
+      </div>
+
+      <div className="flex flex-col items-start copyright-mobile mt-6">
+        <p className="text-[0.75rem] text-[#201F1F]">Anjali Chaudhary</p>
+        <p className="text-[0.75rem] text-[#201F1F]">Copyright © 2025</p>
       </div>
     </div>
   );

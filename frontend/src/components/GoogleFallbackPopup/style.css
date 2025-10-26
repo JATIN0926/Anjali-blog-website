@@ -1,0 +1,12 @@
+@media (max-width: 399px) {
+
+    .sign_in_btn_google{
+        font-size: 0.9rem;
+    }
+}
+@media (min-width: 400px) {
+
+    .sign_in_btn_google{
+        font-size: 1rem;
+    }
+}

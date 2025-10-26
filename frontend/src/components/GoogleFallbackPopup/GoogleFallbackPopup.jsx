@@ -8,7 +8,7 @@ import { setUser } from "../../redux/slices/userSlice";
 import { setShowFallbackPopup } from "../../redux/slices/authUiSlice";
 import { app } from "../../../firebase";
 import axiosInstance from "../../utils/axiosInstance";
-
+import "./style.css"
 const GoogleFallbackPopup = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -63,7 +63,7 @@ const GoogleFallbackPopup = () => {
         </button>
         <button
           onClick={handleSignIn}
-          className="flex items-center gap-3 px-6 py-3 bg-[#0F172A] text-white text-base font-medium rounded-md shadow-md transition cursor-pointer"
+          className="flex items-center gap-3 px-6 py-3 bg-[#0F172A] text-white font-medium rounded-md shadow-md transition cursor-pointer sign_in_btn_google"
         >
           Sign in with Google
           <img src="/icons/GoogleLogo.svg" alt="Google" className="w-5 h-5" />
