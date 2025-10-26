@@ -73,7 +73,7 @@
         font-size: 0.7rem;
     }
     .signin{
-        font-size: 0.65rem;
+        font-size: 0.6rem;
         padding-inline: 0.7rem ;
         padding-block: 0.4rem  ;
     }
@@ -172,11 +172,17 @@
         font-size: 1rem;
     }
     .right{
-        width: 40%;
+        width: 45%;
+    }
+    .signin{
+        font-size: 0.75rem;
     }
 }
 @media (min-width: 1000px) and (max-width: 1199px) {
     .left{
+        width: 40%;
+    }
+    .right{
         width: 40%;
     }
 }
