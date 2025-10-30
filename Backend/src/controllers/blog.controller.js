@@ -247,7 +247,6 @@ export const getBlogsByType = async (req, res) => {
         );
     }
 
-    console.log("Mongo Fetch");
 
     const blogs = await Blog.find({ type, status: "Published" })
       .select("title thumbnail datePosted _id")
@@ -255,7 +254,6 @@ export const getBlogsByType = async (req, res) => {
         createdAt: -1,
       });
 
-    console.log("Mongo Fetch End");
 
     await redisClient.setEx(cacheKey, 86400, JSON.stringify(blogs));
     console.log(`🧠 Cached ${type} blogs in Redis`);

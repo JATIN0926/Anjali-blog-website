@@ -1,8 +1,9 @@
 .tiptap {
   outline: none;
   padding: 0;
-  width: 50rem;
-  max-width: 55rem;
+  width: 100%;
+  max-width: 50rem;
+  /* margin: 0 auto; */
   font-family: 'Georgia', serif;
   background: transparent;
   border: none;
@@ -28,7 +29,7 @@
   }
   
   .tiptap h1 {
-    font-size: 2.9rem;
+    font-size: 3rem;
     font-weight: bold;
     color: #201F1F;
     font-family: 'Inter', sans-serif;
@@ -72,7 +73,12 @@
     line-height: 3.5rem;
     font-family: 'Scheherazade New', serif;
     font-weight: 600;
-  
+  }
+  .title {
+    font-size: 2.7rem;
+    line-height: 3.5rem;
+    font-family: 'Scheherazade New', serif;
+    font-weight: 600;
   }
   
   .tiptap .small-desc {
@@ -138,6 +144,328 @@
     margin: 2rem auto;
   }
   
+  @media (min-width: 400px) and (max-width: 599px) {
+    .blog_render_container{
+      width: 100%;
+    }
+    .blog_type , .blog_date , .time_read{
+      font-size: 0.88rem;
+    }
+    .details_container{
+      gap: 0.5rem;
+    }
+    .published , .subscribed{
+      font-size: 0.75rem;
+    }
+    .title {
+      font-size: 1.75rem;
+      line-height: 2rem;
+      font-family: 'Scheherazade New', serif;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
 
+    /*  */
+
+    .tiptap .regular-para {
+      font-size: 1rem;
+      color: #3D3C3C;
+      line-height: 1.7rem;
+      font-family: 'Inter', sans-serif;
+      font-weight: 350;
+      letter-spacing: 0px;
+    }
+    .tiptap p {
+      font-size: 1rem;
+      color: #3D3C3C;
+      line-height: 1.7rem;
+      font-family: 'Inter', sans-serif;
+      font-weight: 350;
+      letter-spacing: 0px;
+      display: block;
+      }
+
+      .tiptap blockquote p {
+        padding-left: 1rem;
+        border-left: 3px solid black;
+        color: #201F1F;
+        font-family: 'Inter', sans-serif;
+        font-weight: 600;
+        font-size: 1rem;
+        line-height: 1.7rem;
+        font-style: italic;
+      }
+      .tiptap .Value_Statement {
+        font-size: 1.5rem;
+        line-height: 2rem;
+        font-family: 'Inter', sans-serif;
+        font-weight: 300;
+        font-style: light;
+        color: #8A8687;
+        width: 90%;
+        text-align: center;
+        margin: 35px auto;
+      }
+
+      .tiptap h1 {
+        font-size: 1.75rem;
+        font-weight: bold;
+        color: #201F1F;
+        font-family: 'Inter', sans-serif;
+        font-weight: 700;
+        line-height: auto;
+      }
+      
+      .tiptap h2 {
+        font-size: 1.5rem;
+        color: #201F1F;
+        font-family: 'Inter', sans-serif;
+        font-weight: 700;
+        line-height: 2rem;
+      }
+      
+      .tiptap h3 {
+        font-size: 1rem;
+        color: #201F1F;
+        font-family: 'Inter', sans-serif;
+        font-weight: 700;
+        line-height: auto;
+      }
+      .tiptap .separator {
+        width: 100%;
+        height: 1px;
+        opacity: 30%;
+        background-color: #d1d5dc;
+        margin: 1rem auto;
+      }
+      .tiptap p em{
+        font-family: 'Scheherazade New', serif;
+        font-weight: 100;
+        font-size : 0.9rem;
+        color: #504E4F;
+        letter-spacing:0.4px;
+      }
+      .tag{
+        font-size: 0.85rem;
+      }
+      .text_anjali{
+        font-size: 0.7rem;
+      }
+      .go_to_homepage{
+        font-size: 0.7rem;
+      }
+      .tags_container{
+        gap: 0.75rem;
+        width: 100%;
+        margin-top: 0;
+      }
+      .comments_section{
+        margin-top: 1rem;
+        gap: 1.5rem;
+      }
+      .comments_heading{
+        margin-top: 1rem;
+      }
+
+  }
+  @media (min-width: 600px) and (max-width: 799px) {
+    .blog_render_container{
+      width: 28rem;
+    }
+    .title {
+      font-size: 2rem;
+      line-height: 2.25rem;
+      font-family: 'Scheherazade New', serif;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .tiptap .regular-para {
+      font-size: 1rem;
+      color: #3D3C3C;
+      line-height: 1.75rem;
+      font-family: 'Inter', sans-serif;
+      font-weight: 350;
+      letter-spacing: 0px;
+    }
+    .tiptap p {
+      font-size: 1rem;
+      color: #3D3C3C;
+      line-height: 1.75rem;
+      font-family: 'Inter', sans-serif;
+      font-weight: 350;
+      letter-spacing: 0px;
+      display: block;
+      }
+
+      .tiptap blockquote p {
+        padding-left: 1rem;
+        border-left: 3px solid black;
+        color: #201F1F;
+        font-family: 'Inter', sans-serif;
+        font-weight: 600;
+        font-size: 1rem;
+        line-height: 1.75rem;
+        font-style: italic;
+      }
+      .tiptap .Value_Statement {
+        font-size: 2rem;
+        line-height: 2.5rem;
+        font-family: 'Inter', sans-serif;
+        font-weight: 300;
+        font-style: light;
+        color: #8A8687;
+        width: 80%;
+        text-align: center;
+        margin: 35px auto;
+      }
+
+      .tiptap h1 {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #201F1F;
+        font-family: 'Inter', sans-serif;
+        font-weight: 700;
+        line-height: auto;
+      }
+      
+      .tiptap h2 {
+        font-size: 1.75rem;
+        color: #201F1F;
+        font-family: 'Inter', sans-serif;
+        font-weight: 700;
+        line-height: 2rem;
+      }
+      
+      .tiptap h3 {
+        font-size: 1.25rem;
+        color: #201F1F;
+        font-family: 'Inter', sans-serif;
+        font-weight: 700;
+        line-height: auto;
+      }
+      .tiptap .separator {
+        width: 100%;
+        height: 1px;
+        opacity: 30%;
+        background-color: #d1d5dc;
+        margin: 1.5rem auto;
+      }
+
+      .tiptap p em{
+        font-family: 'Scheherazade New', serif;
+        font-weight: 100;
+        font-size : 1.2rem;
+        color: #504E4F;
+        letter-spacing:0.4px;
+      }
+      
+      .tag{
+        font-size: 0.95rem;
+      }
+      .text_anjali{
+        font-size: 0.75rem;
+      }
+      .go_to_homepage{
+        font-size: 0.75rem;
+      }
+      .comments_section{
+        margin-top: 1.5rem;
+        gap: 1.75rem;
+      }
+      .comments_heading{
+        margin-top: 1rem;
+      }
+
+  }
+  @media (min-width: 800px) and (max-width: 999px) {
+    .blog_render_container{
+      width: 38rem;
+    }
+    /* .blog_type , .blog_date , .time_read{
+      font-size: 0.88rem;
+    } */
+    .title {
+      font-size: 2.2rem;
+      line-height: 3rem;
+      font-family: 'Scheherazade New', serif;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    /*  */
+
+    .tiptap .regular-para {
+      font-size: 1.1rem;
+      color: #3D3C3C;
+      line-height: 2rem;
+      font-family: 'Inter', sans-serif;
+      font-weight: 350;
+      letter-spacing: 0px;
+    }
+    .tiptap p {
+      font-size: 1.1rem;
+      color: #3D3C3C;
+      line-height: 2rem;
+      font-family: 'Inter', sans-serif;
+      font-weight: 350;
+      letter-spacing: 0px;
+      display: block;
+      }
+
+      .tiptap .Value_Statement {
+        font-size: 2.25rem;
+        line-height: 2.75rem;
+        font-family: 'Inter', sans-serif;
+        font-weight: 300;
+        font-style: light;
+        color: #8A8687;
+        width: 80%;
+        text-align: center;
+        margin: 35px auto;
+      }
+
+      .tiptap h1 {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #201F1F;
+        font-family: 'Inter', sans-serif;
+        font-weight: 700;
+        line-height: auto;
+      }
+      
+      .tiptap h2 {
+        font-size: 1.85rem;
+        color: #201F1F;
+        font-family: 'Inter', sans-serif;
+        font-weight: 700;
+        line-height: 2rem;
+      }
+      
+      .tiptap h3 {
+        font-size: 1.5rem;
+        color: #201F1F;
+        font-family: 'Inter', sans-serif;
+        font-weight: 700;
+        line-height: auto;
+      }
+      .tiptap .separator {
+        width: 100%;
+        height: 1px;
+        opacity: 30%;
+        background-color: #d1d5dc;
+        margin: 1.5rem auto;
+      }
+      .tag{
+        font-size: 1.1rem;
+      }
+      .text_anjali{
+        font-size: 0.85rem;
+      }
+      .go_to_homepage{
+        font-size: 0.85rem;
+      }
+
+  }
   
   

@@ -350,6 +350,21 @@ const BlogDetail = () => {
     setShowSubscribePopup(true);
   };
 
+  const handleShareClick = () => {
+    const blogUrl = window.location.href; // current blog page URL
+    const text = `Check out this blog by Anjali Chaudhary: ${blogUrl}`;
+  
+    // Encode for URL safety
+    const encodedText = encodeURIComponent(text);
+  
+    // WhatsApp share link (works on both mobile & desktop)
+    const whatsappUrl = `https://api.whatsapp.com/send?text=${encodedText}`;
+  
+    // Open WhatsApp in new tab
+    window.open(whatsappUrl, "_blank");
+  };
+  
+
   if (loading) return <Loader />;
 
   if (!blog)
@@ -392,22 +407,22 @@ const BlogDetail = () => {
         style={{ fontFamily: "SometypeMono Regular, monospace" }}
       >
         <h1
-          className="text-[#201F1F] mt-5 cursor-pointer hover:underline"
+          className="text-[#201F1F] mt-5 cursor-pointer hover:underline text-base text_anjali"
           onClick={() => navigate("/")}
         >
           Anjali Chaudhary
         </h1>
         <h1
-          className="text-[#201F1F] mt-5 cursor-pointer hover:underline"
+          className="text-[#201F1F] mt-5 cursor-pointer hover:underline go_to_homepage text-base"
           onClick={() => navigate("/")}
         >
           Go To HomePage
         </h1>
       </div>
 
-      <div className="flex flex-col gap-3 w-[50rem] max-w-[55rem] m-auto">
+      <div className="flex flex-col gap-3 w-full max-w-[50rem] mx-auto blog_render_container">
         <h1
-          className="text-[2.7rem] leading-[3.5rem] font-semibold mb-4 text-black tracking-[-1px]"
+          className="title font-semibold mb-4 text-black tracking-[-1px]"
           style={{ fontFamily: "ScheherazadeNew Regular, monospace" }}
         >
           {blog.title}
@@ -416,18 +431,18 @@ const BlogDetail = () => {
           className="w-full flex items-center justify-between"
           style={{ fontFamily: "ScheherazadeNew Regular, monospace" }}
         >
-          <div className="flex items-center justify-center gap-3">
-            <p className="text-base text-[#201F1F]">
+          <div className="flex items-center justify-center gap-3 details_container">
+            <p className="text-base text-[#201F1F] blog_type">
               {blog.type === "Article" ? "Social Pattern" : "My Diary"}
             </p>
             <div className="bg-[#B1AFB0] w-2 h-2 rounded-full"></div>
-            <p className="text-base text-[#5F5B5B]">
+            <p className="text-base text-[#5F5B5B] time_read">
               {blog.timeToRead + " "} min read
             </p>
           </div>
 
           <div className="flex items-center justify-center gap-3">
-            <p className="text-base text-[#5F5B5B] ">
+            <p className="text-base text-[#5F5B5B] blog_date ">
               {new Date(blog.datePosted).toLocaleDateString("en-US", {
                 month: "long",
                 day: "numeric",
@@ -435,13 +450,13 @@ const BlogDetail = () => {
               })}
             </p>
             {user?.isAdmin ? (
-              <button className="text-[0.9rem] bg-[#E7E6E6] px-3 py-0.5">
+              <button className="text-[0.9rem] bg-[#E7E6E6] px-3 py-0.5 published">
                 Published
               </button>
             ) : user?.subscriptions?.includes(blog.type) ? (
               <button
                 disabled
-                className="text-[0.9rem] bg-gray-300 text-gray-600 px-3 py-0.5 cursor-not-allowed"
+                className="text-[0.9rem] bg-gray-300 text-gray-600 px-3 py-0.5 cursor-not-allowed subscribed"
               >
                 Subscribed
               </button>
@@ -510,6 +525,7 @@ const BlogDetail = () => {
               src="/icons/share.svg"
               alt="Arrow"
               className="w-6 h-6 cursor-pointer share"
+              onClick={handleShareClick}
             />
           </div>
         </div>
@@ -573,7 +589,7 @@ const BlogDetail = () => {
           </h1>
         )}
 
-        <div className="flex justify-center flex-wrap gap-6 mt-6">
+        <div className="flex justify-center flex-wrap gap-6 mt-6 tags_container">
           {blog.tags.map((tag, index) => (
             <span
               key={index}
@@ -623,19 +639,26 @@ const BlogDetail = () => {
                 />
               </>
             )}
+             <img
+              src="/icons/Download.svg"
+              alt="Arrow"
+              className="w-6 h-6 cursor-pointer share"
+              onClick={downloadAsPdf}
+            />
             <img
               src="/icons/share.svg"
               alt="Arrow"
               className="w-6 h-6 cursor-pointer share"
+              onClick={handleShareClick}
             />
           </div>
         </div>
         <div
           ref={commentSectionRef}
-          className="mt-10 flex flex-col items-start justify-center gap-8"
+          className="mt-10 flex flex-col items-start justify-center gap-8 comments_section"
         >
           <h2
-            className="text-4xl font-semibold mb-5"
+            className="text-4xl font-semibold mb-5 comments_heading"
             style={{ fontFamily: "ScheherazadeNew Regular, monospace" }}
           >
             Comments
@@ -649,7 +672,7 @@ const BlogDetail = () => {
                 <img
                   src={
                     user?.photoURL ||
-                    "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png"
+                    "/icons/profile_avatar.webp"
                   }
                   alt="avatar"
                   className="w-10 h-10 rounded-full"
