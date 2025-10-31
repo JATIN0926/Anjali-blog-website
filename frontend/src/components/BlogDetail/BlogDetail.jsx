@@ -441,7 +441,7 @@ const BlogDetail = () => {
             </p>
           </div>
 
-          <div className="flex items-center justify-center gap-3">
+          <div className="flex items-center justify-center gap-3 date_container">
             <p className="text-base text-[#5F5B5B] blog_date ">
               {new Date(blog.datePosted).toLocaleDateString("en-US", {
                 month: "long",

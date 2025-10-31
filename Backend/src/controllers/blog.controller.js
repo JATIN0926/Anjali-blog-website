@@ -161,11 +161,13 @@ export const deleteBlog = async (req, res) => {
     const cacheKey = `blogs_${deletedBlog.type}`;
     try {
       const result = await redisClient.del(cacheKey);
-      console.log(`🧹 Redis cache cleared for ${cacheKey} (deleted blog):`, result);
+      console.log(
+        `🧹 Redis cache cleared for ${cacheKey} (deleted blog):`,
+        result
+      );
     } catch (err) {
       console.error(`❌ Failed to clear Redis cache for ${cacheKey}:`, err);
     }
-
 
     res
       .status(200)
@@ -247,13 +249,11 @@ export const getBlogsByType = async (req, res) => {
         );
     }
 
-
     const blogs = await Blog.find({ type, status: "Published" })
       .select("title thumbnail datePosted _id")
       .sort({
         createdAt: -1,
       });
-
 
     await redisClient.setEx(cacheKey, 86400, JSON.stringify(blogs));
     console.log(`🧠 Cached ${type} blogs in Redis`);
@@ -524,7 +524,7 @@ export const getRecommendedBlogs = async (req, res) => {
   try {
     const { id } = req.params;
     const page = parseInt(req.query.page) || 1;
-    const limit = 6;
+    const limit = parseInt(req.query.limit) || 6;
 
     const currentBlog = await Blog.findById(id).select("type tags status");
     if (!currentBlog)
@@ -540,21 +540,18 @@ export const getRecommendedBlogs = async (req, res) => {
       matchQuery.tags = { $in: currentBlog.tags };
     }
 
-    const totalSameType = await Blog.countDocuments({
-      type: currentBlog.type,
-      status: "Published",
-    });
-
-    if (totalSameType < 5)
-      return res
-        .status(200)
-        .json(new ApiResponse(200, [], "Not enough blogs for recommendations"));
-
     const allRecommendations = await Blog.find(matchQuery)
       .sort({ createdAt: -1 })
       .select("title thumbnail datePosted _id");
 
     const total = allRecommendations.length;
+
+    if (total < limit)
+      return res
+        .status(200)
+        .json(new ApiResponse(200, [], "Not enough blogs for recommendations"));
+
+    // ✅ proper cycling
     const startIdx = ((page - 1) * limit) % total;
 
     const recommendations = [];

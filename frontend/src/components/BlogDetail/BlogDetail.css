@@ -5,3 +5,11 @@
 .edit:hover, .delete:hover, .share:hover {
   opacity: 0.5;
 }
+
+@media (max-width : 400px) {
+  
+  .fetch_more{
+    font-size: 0.85rem;
+    padding-inline: 1.25rem;
+  }
+}
